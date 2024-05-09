@@ -1,6 +1,5 @@
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import { Colors } from "@src/constants";
-import React from "react";
 import {
   Animated,
   StyleSheet,
