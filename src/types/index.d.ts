@@ -32,3 +32,44 @@ type TimeFrame = {
   duration: number;
   cost: number;
 };
+
+type Booking = {
+  idTicket: string;
+  parkingLot: ParkingLot;
+  vehicle: Vehicle;
+  blockCode: string;
+  parkingSlot: ParkingSlot;
+  timeFrame: TimeFrame;
+  startTime: Date;
+  endTime: Date;
+  bookingDate: Date;
+};
+
+type Ticket = {
+  id: string;
+  vehicleId: string;
+  vehicle: Vehicle | null;
+  userId: string;
+  parkingLotId: string;
+  parkingLot: ParkingLot | null;
+  parkingSlotId: string;
+  parkingSlot: ParkingSlot | null;
+  timeFrameId: string;
+  timeFrame: TimeFrame | null;
+  startTime: Date;
+  endTime: Date;
+  entryTime: Date;
+  exitTime: Date;
+  total: string;
+  state: string;
+  isExtend: boolean;
+  ticketExtend: Ticket[];
+};
+
+type Vehicle = {
+  id?: string;
+  userId: string;
+  name: string;
+  number: string;
+  type: string;
+};
