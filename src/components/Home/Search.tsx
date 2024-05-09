@@ -5,7 +5,6 @@ import {
   TextInput,
   View,
   TouchableOpacity,
-  Image,
 } from "react-native";
 import { useState } from "react";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
@@ -14,10 +13,10 @@ import parkingLotApi from "@src/api/parkingLotApi";
 
 type Props = {
   onSelected: any;
-  currentLocation: Location;
+  currentLocation: MapLocation;
 };
 
-type Location = {
+export type MapLocation = {
   latitude: number;
   longitude: number;
 };
@@ -26,33 +25,10 @@ const SearchAutocomplete = (props: Props) => {
   const [value, setValue] = useState<string>();
   const [data, setData] = useState<ParkingLot[]>([]);
 
-  const getItemText = (item: ParkingLot) => {
-    return (
-      <View style={styles.itemContainer}>
-        <Image
-          style={styles.image}
-          width={22}
-          source={require("src/assets/images/location.png")}
-        />
-        <View
-          style={{
-            flex: 1,
-            borderBottomWidth: 1,
-            borderBottomColor: Colors.light.tabIconDefault,
-          }}
-        >
-          <Text style={styles.itemName} numberOfLines={1}>
-            {item.name}
-          </Text>
-          <Text style={styles.itemAddress} numberOfLines={1}>
-            {item.address}
-          </Text>
-        </View>
-      </View>
-    );
-  };
-
-  const handleChangeText = async (text: string, currentLocation: Location) => {
+  const handleChangeText = async (
+    text: string,
+    currentLocation: MapLocation,
+  ) => {
     if (text.length >= 2) {
       try {
         const result = await parkingLotApi.getAll({
@@ -103,7 +79,7 @@ const SearchAutocomplete = (props: Props) => {
       <FlatList
         keyExtractor={(item) => item.id}
         data={data}
-        style={{ marginHorizontal: 10, marginTop: 10 }}
+        style={{ margin: 10 }}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => {
@@ -112,7 +88,7 @@ const SearchAutocomplete = (props: Props) => {
               setValue(item.name);
             }}
           >
-            {getItemText(item)}
+            {SearchItem(item)}
           </TouchableOpacity>
         )}
       />
@@ -122,11 +98,31 @@ const SearchAutocomplete = (props: Props) => {
 
 export default SearchAutocomplete;
 
+const SearchItem = (item: ParkingLot) => {
+  return (
+    <View style={styles.itemContainer}>
+      <View
+        style={{
+          flex: 1,
+          borderBottomWidth: 1,
+          borderBottomColor: Colors.light.tabIconDefault,
+        }}
+      >
+        <Text style={styles.itemName} numberOfLines={1}>
+          {item.name}
+        </Text>
+        <Text style={styles.itemAddress} numberOfLines={1}>
+          {item.address}
+        </Text>
+      </View>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   searchContainer: {
     width: "100%",
     backgroundColor: "transparent",
-    paddingTop: 30,
     overflow: "visible",
   },
   search: {
@@ -153,6 +149,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 50,
     marginVertical: 10,
+    marginHorizontal: 8,
   },
   itemName: {
     fontSize: 17,

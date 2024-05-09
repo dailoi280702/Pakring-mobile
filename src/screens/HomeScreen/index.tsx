@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { View } from "react-native";
+import Map from "@src/components/Home/Map";
 
 type Props = NativeStackScreenProps<AppStackParams, "Home">;
 
@@ -16,6 +17,7 @@ const HomeScreen = ({ navigation }: Props) => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
         <StatusBar style="dark" />
+        <Map></Map>
         <Text>Home</Text>
       </View>
     </TouchableWithoutFeedback>
