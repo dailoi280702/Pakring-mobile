@@ -5,21 +5,23 @@ interface IResetPasswordParams {
 }
 
 interface ISignUpParams {
-  verificationId: string;
+  phoneNumber: string;
   type: string;
   user: User;
 }
 
 interface IVerificationParams {
   phoneNumber: string;
+  type: string;
 }
 
 export type AppStackParams = {
+  Home: {};
   SignIn: undefined;
   SignUp: ISignUpParams;
   ResetPassword: IResetPasswordParams;
   Verification: IVerificationParams;
   App: undefined;
   NotFound: undefined;
-  ChangePassword: undefined;
+  ChangePassword: any;
 };

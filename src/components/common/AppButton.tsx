@@ -2,21 +2,21 @@ import { Colors } from "@src/constants";
 import { ActivityIndicator, TouchableOpacity } from "react-native";
 
 interface ButtonProps {
-  width: string;
-  height: string;
-  onPress: any;
-  isLoading: boolean;
+  width?: string;
+  height?: string;
+  onPress?: any;
+  isLoading?: boolean;
   children: JSX.Element;
-  style: any;
+  style?: any;
 }
 
 const AppButton = ({
-  width,
-  height,
-  onPress,
-  isLoading,
+  width = "auto",
+  height = "45",
+  onPress = () => {},
+  isLoading = false,
   children,
-  style,
+  style = {},
 }: ButtonProps) => {
   const w = width == "auto" ? "auto" : parseInt(width);
   const h = height == "auto" ? "auto" : parseInt(height);
@@ -27,14 +27,6 @@ const AppButton = ({
       {children}
     </TouchableOpacity>
   );
-};
-
-AppButton.defaultProps = {
-  width: "auto",
-  height: 45,
-  isLoading: false,
-  onPress: () => {},
-  style: {},
 };
 
 const styles = {
