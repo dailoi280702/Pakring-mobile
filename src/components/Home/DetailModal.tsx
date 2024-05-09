@@ -1,5 +1,7 @@
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { Colors } from "@src/constants";
+import { useAppSelector } from "@src/store/hooks";
+import { selectBooking } from "@src/store/selectors";
 import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -12,6 +14,7 @@ type Props = {
 const DetailModal = (props: Props) => {
   const { isShow, onClose } = props;
   const ref = React.useRef<BottomSheet>(null);
+  const parkingLot = useAppSelector(selectBooking).parkingLot;
 
   const onOpenBottomSheetHandler = (index: number) => {
     ref?.current?.snapToIndex(index);
@@ -54,8 +57,15 @@ const DetailModal = (props: Props) => {
                 justifyContent: "space-between",
               }}
             ></View>
-            <Text>Distance: {props.distance} km</Text>
-            <Text style={styles.title}>Parking lot info</Text>
+            {parkingLot ? (
+              <>
+                <Text>Distance: {props.distance} km</Text>
+                <Text style={styles.title}>Parking lot info</Text>
+                <Text>{JSON.stringify(parkingLot)}</Text>
+              </>
+            ) : (
+              <Text>No data</Text>
+            )}
           </View>
         </BottomSheetView>
       </BottomSheet>
