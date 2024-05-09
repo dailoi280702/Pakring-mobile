@@ -1,7 +1,10 @@
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
+import bookingSlice from "./slices/bookingSlice";
 
 export const store = configureStore({
-  reducer: {},
+  reducer: {
+    booking: bookingSlice.reducer,
+  },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,

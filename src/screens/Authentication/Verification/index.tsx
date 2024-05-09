@@ -1,8 +1,13 @@
 import { AntDesign } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { RouteProp } from "@react-navigation/native";
 import AppButton from "@src/components/common/AppButton";
 import { Colors } from "@src/constants";
+import { useAppDispatch } from "@src/store/hooks";
+import { userActions } from "@src/store/slices/userSlice";
 import { useEffect, useRef, useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   StyleSheet,
   Text,
@@ -11,10 +16,13 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { AppStackParams } from "@src/navigation/AppNavigator/types";
+import { NavigationProp } from "@react-navigation/native";
+import authApi from "@src/api/authApi";
 
-type Props = NativeStackScreenProps<AppStackParams, "Verification">;
+type Props = {
+  navigation: NavigationProp<any, any>;
+  route: RouteProp<any, any>;
+};
 
 const Verification = (props: Props) => {
   const refPin1 = useRef<TextInput>(null);
@@ -32,17 +40,39 @@ const Verification = (props: Props) => {
   const [timerCount, setTimer] = useState(60);
   const routeData = props.route.params;
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useAppDispatch();
+  const [phoneNumber] = useState(routeData.phoneNumber);
 
   const handleVerification = async () => {
-    setIsLoading(true);
-    if (routeData.type === "SignUp") {
-      props.navigation.navigate("SignIn");
-    } else if (routeData.type === "ResetPassword") {
-      props.navigation.navigate("ChangePassword", {
-        phoneNumber: routeData.phoneNumber,
-      });
+    try {
+      setIsLoading(true);
+      const verificationCode = `${pin1}${pin2}${pin3}${pin4}${pin5}${pin6}`;
+      await authApi.verifyOtp(phoneNumber, verificationCode);
+      if (routeData.type === "SignUp") {
+        const res = await dispatch(
+          userActions.createUser(routeData.user)
+        ).unwrap();
+        setIsLoading(false);
+        if (res.errorMessage) {
+          Alert.alert("Error: " + res.errorMessage);
+          return;
+        }
+        if (res.data) {
+          Alert.alert("Successfully!");
+          await AsyncStorage.setItem("password", res.data.password);
+          await AsyncStorage.setItem("phoneNumber", res.data.phoneNumber);
+          await AsyncStorage.setItem("idUser", res.data.id);
+          props.navigation.navigate("SignIn");
+        }
+      } else if (routeData.type === "ResetPassword") {
+        props.navigation.navigate("ChangePassword", {
+          phoneNumber: routeData.phoneNumber,
+        });
+      }
+    } catch (err: any) {
+      setIsLoading(false);
+      Alert.alert(`Error: ${err.message}`);
     }
-    setIsLoading(false);
   };
 
   const handleResendOTP = async () => {
@@ -56,7 +86,8 @@ const Verification = (props: Props) => {
         lastTimerCount <= 1 && clearInterval(interval);
         return lastTimerCount - 1;
       });
-    }, 1000);
+    }, 1000); //each count lasts for a second
+    //cleanup the interval on complete
     return () => clearInterval(interval);
   };
   useEffect(() => {
@@ -65,7 +96,8 @@ const Verification = (props: Props) => {
         lastTimerCount <= 1 && clearInterval(interval);
         return lastTimerCount - 1;
       });
-    }, 1000);
+    }, 1000); //each count lasts for a second
+    //cleanup the interval on complete
     return () => clearInterval(interval);
   }, []);
 
@@ -82,7 +114,7 @@ const Verification = (props: Props) => {
           />
           <Text style={styles.title}>Verification</Text>
           <Text style={styles.description}>
-            We're send you the verification code on your phone
+            We're send you the verification code on your email
           </Text>
           <View style={styles.containerInput}>
             <TextInput

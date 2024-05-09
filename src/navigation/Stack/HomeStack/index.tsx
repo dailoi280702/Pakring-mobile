@@ -24,7 +24,10 @@ const HomeStack = () => {
         component={HomeScreen}
         options={{
           headerShown: false,
-          contentStyle: { paddingTop: Platform.OS === "android" ? 56 : 44 },
+          contentStyle: {
+            paddingTop: Platform.OS === "android" ? 56 : 44,
+            backgroundColor: Colors.light.background,
+          },
         }}
       />
     </Stack.Navigator>
