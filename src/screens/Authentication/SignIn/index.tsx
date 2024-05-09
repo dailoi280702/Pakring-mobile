@@ -2,10 +2,13 @@ import { MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AppButton from "@src/components/common/AppButton";
 import { Colors } from "@src/constants";
+import { useAppDispatch } from "@src/store/hooks";
+import { userActions } from "@src/store/slices/userSlice";
 import { StatusBar } from "expo-status-bar";
 import { Formik, FormikProps } from "formik";
 import { useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Keyboard,
   StyleSheet,
   Switch,
@@ -30,7 +33,9 @@ type LoginValue = {
 const SignIn = (props: Props) => {
   const [isRemember, setIsRemember] = useState(true);
   const [hidePassword, setHidePassword] = useState(true);
+  const dispatch = useAppDispatch();
   const formikRef = useRef<FormikProps<LoginValue>>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const LoginSchema = Yup.object().shape({
     phoneNumber: Yup.string()
@@ -45,7 +50,33 @@ const SignIn = (props: Props) => {
     setIsRemember((previousState) => !previousState);
 
   const login = async (values: any) => {
-    props.navigation.navigate("App");
+    try {
+      setIsLoading(true);
+      const result = await dispatch(
+        userActions.login({
+          username: values.phoneNumber,
+          password: values.password,
+        })
+      ).unwrap();
+      setIsLoading(false);
+      if (result.errorMessage) {
+        Alert.alert("Error: " + result.errorMessage);
+        return;
+      }
+      if (isRemember) {
+        await AsyncStorage.setItem("phoneNumber", values.phoneNumber);
+        await AsyncStorage.setItem("password", values.password);
+        await AsyncStorage.setItem("idUser", result.id);
+      } else {
+        await AsyncStorage.removeItem("phoneNumber");
+        await AsyncStorage.removeItem("password");
+        await AsyncStorage.removeItem("idUser");
+      }
+      props.navigation.navigate("App");
+    } catch (error: any) {
+      setIsLoading(false);
+      Alert.alert("Error: " + error);
+    }
   };
 
   useEffect(() => {
@@ -69,8 +100,8 @@ const SignIn = (props: Props) => {
         <Formik
           innerRef={formikRef}
           initialValues={{ phoneNumber: "", password: "" }}
-          onSubmit={(values) => login(values)}
           validationSchema={LoginSchema}
+          onSubmit={(values) => login(values)}
         >
           {({ handleChange, handleSubmit, values, errors, touched }) => (
             <View style={styles.controller}>
@@ -166,7 +197,11 @@ const SignIn = (props: Props) => {
                   </Text>
                 </TouchableOpacity>
               </View>
-              <AppButton style={styles.btnSignIn} onPress={handleSubmit}>
+              <AppButton
+                style={styles.btnSignIn}
+                isLoading={isLoading}
+                onPress={handleSubmit}
+              >
                 <Text
                   style={{ fontSize: 22, fontWeight: "600", color: "white" }}
                 >
