@@ -1,15 +1,19 @@
 import {
+  AntDesign,
   Feather,
   MaterialCommunityIcons,
   MaterialIcons,
   Octicons,
 } from "@expo/vector-icons";
+import userApi from "@src/api/userApi";
+import authApi from "@src/api/authApi";
 import AppButton from "@src/components/common/AppButton";
 import { Colors } from "@src/constants";
 import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
+  Alert,
   Keyboard,
   StyleSheet,
   Text,
@@ -28,8 +32,10 @@ type Props = {
 
 const SignUp = (props: Props) => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const recaptchaVerifier = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  //validate
   const SignupSchema = Yup.object().shape({
     name: Yup.string().required("Please enter name!"),
     email: Yup.string().email("Invalid email").required("Please enter email!"),
@@ -41,21 +47,48 @@ const SignUp = (props: Props) => {
     passwordConfirm: Yup.string().required("Please enter password!"),
   });
 
+  //handle sign up
   const handleSignUp = async (values: any) => {
-    setIsLoading(true);
-    props.navigation.navigate("Verification", {
-      user: values,
-      type: "SignUp",
-      phoneNumber: "",
-    });
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const isExist = await userApi.checkDuplicatePhone(values.phoneNumber);
+      if (isExist.data) {
+        Alert.alert("Failed! PhoneNumber is already in use");
+        setIsLoading(false);
+        return;
+      }
+      if (values.password !== values.passwordConfirm) {
+        Alert.alert("Failed! Password does not match! ");
+        setIsLoading(false);
+        return;
+      }
+      const phoneNumber = `+84${values.phoneNumber.slice(
+        1,
+        values.phoneNumber.length
+      )}`;
+      await authApi.sendOtp(phoneNumber);
+      const verificationId = phoneNumber;
+      props.navigation.navigate("Verification", {
+        user: values,
+        type: "SignUp",
+        verificationId,
+      });
+    } catch (error: any) {
+      Alert.alert(`Error: ${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
-
+  
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView>
         <StatusBar style="dark" />
         <View style={styles.container}>
+          {/* <FirebaseRecaptchaVerifierModal */}
+          {/*   ref={recaptchaVerifier} */}
+          {/*   firebaseConfig={app.options} */}
+          {/* /> */}
           <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
             <Formik
               initialValues={{
@@ -65,10 +98,17 @@ const SignUp = (props: Props) => {
                 password: "",
                 passwordConfirm: "",
               }}
-              onSubmit={(values) => handleSignUp(values)}
               validationSchema={SignupSchema}
+              onSubmit={(values) => handleSignUp(values)}
             >
-              {({ handleChange, handleSubmit, values, errors, touched }) => (
+              {({
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                values,
+                errors,
+                touched,
+              }) => (
                 <>
                   <View style={styles.containerInput}>
                     <View style={styles.groupInput}>
