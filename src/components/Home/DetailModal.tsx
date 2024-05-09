@@ -1,9 +1,14 @@
+import {
+  Feather,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { Colors } from "@src/constants";
 import { useAppSelector } from "@src/store/hooks";
 import { selectBooking } from "@src/store/selectors";
-import React, { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type Props = {
   isShow: boolean;
@@ -15,6 +20,7 @@ const DetailModal = (props: Props) => {
   const { isShow, onClose } = props;
   const ref = React.useRef<BottomSheet>(null);
   const parkingLot = useAppSelector(selectBooking).parkingLot;
+  const [numOfAvailableSlots, setNumOfAvailableSlots] = useState(0);
 
   const onOpenBottomSheetHandler = (index: number) => {
     ref?.current?.snapToIndex(index);
@@ -50,18 +56,118 @@ const DetailModal = (props: Props) => {
               backgroundColor: "white",
             }}
           >
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            ></View>
             {parkingLot ? (
               <>
-                <Text>Distance: {props.distance} km</Text>
-                <Text style={styles.title}>Parking lot info</Text>
-                <Text>{JSON.stringify(parkingLot)}</Text>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "700",
+                      color: Colors.light.primary,
+                      lineHeight: 24,
+                    }}
+                    numberOfLines={2}
+                  >
+                    {parkingLot?.name}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      lineHeight: 20,
+                      color: Colors.light.subtitle,
+                      textAlign: "justify",
+                    }}
+                  >
+                    Description: {parkingLot?.description}
+                  </Text>
+                  <View style={{ ...styles.flexRow, marginVertical: 12 }}>
+                    <Feather
+                      name="map-pin"
+                      size={18}
+                      color={Colors.light.heading}
+                    />
+                    <Text
+                      numberOfLines={2}
+                      ellipsizeMode="tail"
+                      style={{
+                        fontSize: 14,
+                        fontWeight: "600",
+                        color: Colors.light.heading,
+                        lineHeight: 18,
+                        width: "90%",
+                        marginLeft: 12,
+                      }}
+                    >
+                      {parkingLot?.address}
+                    </Text>
+                  </View>
+                </View>
+                <View style={{ ...styles.flexRow, marginVertical: 12 }}>
+                  <View
+                    style={{
+                      backgroundColor: Colors.light.primary,
+                      padding: 4,
+                      borderRadius: 4,
+                    }}
+                  >
+                    <MaterialIcons
+                      name="directions-walk"
+                      size={18}
+                      color={Colors.light.background}
+                    />
+                  </View>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "600",
+                      marginHorizontal: 8,
+                      color: Colors.light.heading,
+                    }}
+                  >
+                    {Math.round(props.distance * 100) / 100}km
+                  </Text>
+                  <View
+                    style={{
+                      backgroundColor: Colors.light.primary,
+                      padding: 5,
+                      borderRadius: 4,
+                      marginLeft: 24,
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                      name="parking"
+                      size={16}
+                      color={Colors.light.background}
+                    />
+                  </View>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "600",
+                      marginHorizontal: 8,
+                      color: Colors.light.heading,
+                    }}
+                  >
+                    {numOfAvailableSlots} slots available
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.btnBook}
+                  onPress={() => {
+                    console.log("go to booking screen");
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "700",
+                      color: Colors.light.background,
+                      textAlign: "center",
+                    }}
+                  >
+                    View details
+                  </Text>
+                </TouchableOpacity>
               </>
             ) : (
               <Text>No data</Text>
@@ -74,6 +180,35 @@ const DetailModal = (props: Props) => {
 };
 
 const styles = StyleSheet.create({
+  btnBook: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.light.primary,
+    borderRadius: 8,
+    height: 42,
+    marginVertical: 12,
+  },
+  header: {
+    backgroundColor: Colors.light.background,
+    shadowColor: Colors.light.primary,
+    shadowOffset: { width: -1, height: -4 },
+    shadowRadius: 2,
+    shadowOpacity: 0.15,
+    paddingTop: 10,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+  },
+  panelHeader: {
+    alignItems: "center",
+  },
+  panelHandle: {
+    width: 40,
+    height: 6,
+    borderRadius: 4,
+    backgroundColor: "#00000040",
+    marginBottom: 10,
+  },
   title: {
     fontSize: 18,
     fontWeight: "700",
@@ -81,6 +216,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginTop: 16,
   },
+  flexRow: { display: "flex", flexDirection: "row", alignItems: "center" },
 });
 
 export default DetailModal;
