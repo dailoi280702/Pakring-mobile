@@ -2,8 +2,11 @@ import parkingLotApi from "@src/api/parkingLotApi";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import SearchAutocomplete, { MapLocation } from "./Search";
-import {  StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import MapViewDirections from "react-native-maps-directions";
+import { Colors } from "@src/constants";
+import config from "@src/config";
 
 type Props = {
   onSelectedMarker: (p: ParkingLot) => void;
@@ -23,6 +26,7 @@ const Map = (props: Props) => {
   });
   const [locations, setLocations] = useState([]);
   const [parkings, setParkings] = useState<ParkingLot[]>([]);
+  const [destination, setDestination] = useState();
 
   const handleSelectedSearchItem = (location: ParkingLot) => {
     const tmp = {
@@ -115,10 +119,22 @@ const Map = (props: Props) => {
                 onPress={() => {
                   props.onSelectedMarker(parkings[index]);
                   setRegion({ ...region, ...e });
+                  setDestination(e);
                 }}
               />
             );
           })}
+
+        {destination && (
+          <MapViewDirections
+            origin={currentLocation}
+            destination={destination}
+            apikey={config.MAP_API_KEY}
+            strokeWidth={4}
+            strokeColor={Colors.light.primary}
+            optimizeWaypoints={true}
+          />
+        )}
       </MapView>
     </>
   );
