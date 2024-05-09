@@ -20,6 +20,7 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NavigationProp } from "@react-navigation/native";
+import * as Yup from "yup";
 
 type Props = {
   navigation: NavigationProp<any, any>;
@@ -28,6 +29,17 @@ type Props = {
 const SignUp = (props: Props) => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+
+  const SignupSchema = Yup.object().shape({
+    name: Yup.string().required("Please enter name!"),
+    email: Yup.string().email("Invalid email").required("Please enter email!"),
+    phoneNumber: Yup.string()
+      .matches(new RegExp("^0"), "Invalid phone number")
+      .required("Please enter phone number!")
+      .length(10, "Phone number must include 10 numbers"),
+    password: Yup.string().required("Please enter password!"),
+    passwordConfirm: Yup.string().required("Please enter password!"),
+  });
 
   const handleSignUp = async (values: any) => {
     setIsLoading(true);
@@ -54,6 +66,7 @@ const SignUp = (props: Props) => {
                 passwordConfirm: "",
               }}
               onSubmit={(values) => handleSignUp(values)}
+              validationSchema={SignupSchema}
             >
               {({ handleChange, handleSubmit, values, errors, touched }) => (
                 <>

@@ -17,6 +17,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NavigationProp } from "@react-navigation/native";
+import * as Yup from "yup";
 
 type Props = {
   navigation: NavigationProp<any, any>;
@@ -30,6 +31,15 @@ const SignIn = (props: Props) => {
   const [isRemember, setIsRemember] = useState(true);
   const [hidePassword, setHidePassword] = useState(true);
   const formikRef = useRef<FormikProps<LoginValue>>();
+
+  const LoginSchema = Yup.object().shape({
+    phoneNumber: Yup.string()
+      .matches(new RegExp("^0"), "Invalid phone number")
+      .required("Please enter phone number!")
+      .length(10, "Phone number must include 10 numbers")
+      .nullable(),
+    password: Yup.string().required("Please enter password").nullable(),
+  });
 
   const toggleSwitch = async () =>
     setIsRemember((previousState) => !previousState);
@@ -60,6 +70,7 @@ const SignIn = (props: Props) => {
           innerRef={formikRef}
           initialValues={{ phoneNumber: "", password: "" }}
           onSubmit={(values) => login(values)}
+          validationSchema={LoginSchema}
         >
           {({ handleChange, handleSubmit, values, errors, touched }) => (
             <View style={styles.controller}>
