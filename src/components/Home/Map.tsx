@@ -2,8 +2,14 @@ import parkingLotApi from "@src/api/parkingLotApi";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import SearchAutocomplete, { MapLocation } from "./Search";
+import {  StyleSheet } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 
-const Map = () => {
+type Props = {
+  onSelectedMarker: (p: ParkingLot) => void;
+};
+
+const Map = (props: Props) => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [region, setRegion] = useState({
     latitude: 10.879424639901684,
@@ -20,9 +26,13 @@ const Map = () => {
 
   const handleSelectedSearchItem = (location: ParkingLot) => {
     const tmp = {
+      ...location,
       longitude: Number(location.long),
       latitude: Number(location.lat),
     };
+
+    if (!parkings.find((p) => p.id == location.id))
+      setParkings((old) => [...old, location]);
 
     if (!locations.includes(tmp)) {
       var locationTmp = locations;
@@ -72,6 +82,7 @@ const Map = () => {
           setParkings(result.data.data);
           const tmp = result.data.data.map((element: any) => {
             return {
+              ...element,
               longitude: Number(element.long),
               latitude: Number(element.lat),
             };
@@ -88,8 +99,35 @@ const Map = () => {
         onSelected={handleSelectedSearchItem}
         currentLocation={currentLocation}
       />
+      <MapView
+        style={styles.map}
+        region={region}
+        provider="google"
+        showsMyLocationButton
+        showsUserLocation
+      >
+        {locations &&
+          locations.map((e, index) => {
+            return (
+              <Marker
+                coordinate={{ latitude: e.latitude, longitude: e.longitude }}
+                key={`marker${index}`}
+                onPress={() => {
+                  props.onSelectedMarker(parkings[index]);
+                  setRegion({ ...region, ...e });
+                }}
+              />
+            );
+          })}
+      </MapView>
     </>
   );
 };
 
 export default Map;
+
+const styles = StyleSheet.create({
+  map: {
+    height: "92%",
+  },
+});

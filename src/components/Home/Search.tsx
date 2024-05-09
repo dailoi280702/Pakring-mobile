@@ -152,10 +152,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
   itemName: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: "400",
   },
   itemAddress: {
+    fontSize: 14,
     marginTop: 2,
     color: "#56585D",
   },

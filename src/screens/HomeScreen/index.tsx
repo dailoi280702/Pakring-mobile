@@ -1,12 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AppStackParams } from "@src/navigation/AppNavigator/types";
 import { StatusBar } from "expo-status-bar";
-import {
-  Keyboard,
-  StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { Keyboard, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { View } from "react-native";
 import Map from "@src/components/Home/Map";
 
@@ -17,8 +12,11 @@ const HomeScreen = ({ navigation }: Props) => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
         <StatusBar style="dark" />
-        <Map></Map>
-        <Text>Home</Text>
+        <Map
+          onSelectedMarker={(p: ParkingLot) => {
+            console.log(p);
+          }}
+        />
       </View>
     </TouchableWithoutFeedback>
   );
