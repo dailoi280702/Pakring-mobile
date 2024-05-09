@@ -1,4 +1,3 @@
-import React from "react";
 import { StyleSheet, Text } from "react-native";
 import { View } from "react-native";
 
@@ -13,7 +12,7 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    marginTop: 40,
     flex: 1,
   },
 });

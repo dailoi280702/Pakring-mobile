@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@nghinv/react-native-loading": "^1.0.3",
+    "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "7.7.0",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/material-top-tabs": "^6.6.13",
@@ -31,6 +32,7 @@
     "expo-splash-screen": "~0.27.4",
     "expo-status-bar": "~1.12.1",
     "expo-updates": "~0.25.9",
+    "formik": "^2.4.6",
     "react": "18.2.0",
     "react-native": "0.74.1",
     "react-native-dashed-line": "^1.1.0",
@@ -44,7 +46,8 @@
     "react-native-screens": "3.31.1",
     "react-native-tab-view": "^3.5.2",
     "react-redux": "^9.1.0",
-    "redux": "^5.0.1"
+    "redux": "^5.0.1",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
