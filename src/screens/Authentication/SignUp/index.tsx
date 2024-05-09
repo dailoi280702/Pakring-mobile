@@ -74,7 +74,8 @@ const SignUp = (props: Props) => {
       });
       console.log(phoneNumber);
     } catch (error: any) {
-      Alert.alert(`Error: ${error.message}`);
+      Alert.alert(`Incorrect OTP code`);
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
