@@ -67,28 +67,25 @@ const SignUp = (props: Props) => {
         values.phoneNumber.length
       )}`;
       await authApi.sendOtp(phoneNumber);
-      const verificationId = phoneNumber;
       props.navigation.navigate("Verification", {
         user: values,
         type: "SignUp",
-        verificationId,
+        phoneNumber,
       });
+      console.log(phoneNumber);
     } catch (error: any) {
-      Alert.alert(`Error: ${error.message}`);
+      Alert.alert(`Incorrect OTP code`);
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView>
         <StatusBar style="dark" />
         <View style={styles.container}>
-          {/* <FirebaseRecaptchaVerifierModal */}
-          {/*   ref={recaptchaVerifier} */}
-          {/*   firebaseConfig={app.options} */}
-          {/* /> */}
           <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
             <Formik
               initialValues={{
