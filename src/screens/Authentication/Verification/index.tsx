@@ -41,15 +41,13 @@ const Verification = (props: Props) => {
   const routeData = props.route.params;
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
-  const [verificationId, setVerificationId] = useState(
-    routeData.verificationId
-  );
+  const [phoneNumber] = useState(routeData.phoneNumber);
 
   const handleVerification = async () => {
     try {
       setIsLoading(true);
       const verificationCode = `${pin1}${pin2}${pin3}${pin4}${pin5}${pin6}`;
-      await authApi.verifyOtp(verificationId, verificationCode);
+      await authApi.verifyOtp(phoneNumber, verificationCode);
       if (routeData.type === "SignUp") {
         const res = await dispatch(
           userActions.createUser(routeData.user)
