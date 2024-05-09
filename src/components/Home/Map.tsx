@@ -10,10 +10,10 @@ import config from "@src/config";
 
 type Props = {
   onSelectedMarker: (p: ParkingLot) => void;
+  setDistance: (d: number) => void;
 };
 
 const Map = (props: Props) => {
-  const [errorMsg, setErrorMsg] = useState(null);
   const [region, setRegion] = useState({
     latitude: 10.879424639901684,
     longitude: 106.63844840942431,
@@ -54,7 +54,7 @@ const Map = (props: Props) => {
     const getCurrentLocationAndParkingLot = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
+        console.log("Permission to access location was denied");
         return;
       }
 
@@ -133,6 +133,9 @@ const Map = (props: Props) => {
             strokeWidth={4}
             strokeColor={Colors.light.primary}
             optimizeWaypoints={true}
+            onReady={({ distance }) => {
+              props.setDistance(distance);
+            }}
           />
         )}
       </MapView>

@@ -6,6 +6,7 @@ import { StyleSheet, Text, View } from "react-native";
 type Props = {
   isShow: boolean;
   onClose: any;
+  distance: number;
 };
 
 const DetailModal = (props: Props) => {
@@ -53,6 +54,7 @@ const DetailModal = (props: Props) => {
                 justifyContent: "space-between",
               }}
             ></View>
+            <Text>Distance: {props.distance} km</Text>
             <Text style={styles.title}>Parking lot info</Text>
           </View>
         </BottomSheetView>

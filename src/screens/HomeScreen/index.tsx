@@ -11,6 +11,7 @@ type Props = NativeStackScreenProps<AppStackParams, "Home">;
 
 const HomeScreen = ({ navigation }: Props) => {
   const [isShowDetail, setIsShowDetail] = useState(false);
+  const [distance, setDistance] = useState(0);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -21,11 +22,15 @@ const HomeScreen = ({ navigation }: Props) => {
             setIsShowDetail(true);
             console.log(p);
           }}
+          setDistance={(d: number) => {
+            setDistance(d);
+          }}
         />
 
         <DetailModal
           isShow={isShowDetail}
           onClose={() => setIsShowDetail(false)}
+          distance={distance}
         />
       </View>
     </TouchableWithoutFeedback>
