@@ -3,8 +3,18 @@ import { Colors } from "@src/constants";
 import HomeScreen from "@src/screens/HomeScreen";
 import { HomeStackParams } from "../types";
 import { Platform } from "react-native";
+import ParkingDetailsScreen from "@src/screens/ParkingDetailsScreen";
 
 const Stack = createNativeStackNavigator<HomeStackParams>();
+
+const headerOption = {
+  headerStyle: {
+    backgroundColor: Colors.light.background,
+  },
+  headerTitleStyle: {
+    color: Colors.light.heading,
+  },
+};
 
 const HomeStack = () => {
   return (
@@ -28,6 +38,14 @@ const HomeStack = () => {
             paddingTop: Platform.OS === "android" ? 56 : 44,
             backgroundColor: Colors.light.background,
           },
+        }}
+      />
+      <Stack.Screen
+        name="ParkingDetailsScreen"
+        component={ParkingDetailsScreen}
+        options={{
+          title: "Parking details",
+          ...headerOption,
         }}
       />
     </Stack.Navigator>
