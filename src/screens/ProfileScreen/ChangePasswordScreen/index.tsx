@@ -1,17 +1,15 @@
 import {
-  AntDesign,
   MaterialCommunityIcons,
   Octicons,
 } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { RouteProp } from "@react-navigation/native";
 import authApi from "@src/api/authApi";
 import AppButton from "@src/components/common/AppButton";
 import { Colors } from "@src/constants";
 import { useAppSelector } from "@src/store/hooks";
 import { selectUser } from "@src/store/selectors";
 import { Formik } from "formik";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Alert,
   Keyboard,

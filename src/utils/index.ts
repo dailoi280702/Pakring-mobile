@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import AlertHelper from "./AlertHelper";
 
 const DateTimeHelper = {
   formatDate: (date: Date) => dayjs(date).format("DD/MM/YYYY"),
@@ -17,4 +18,4 @@ const DateTimeHelper = {
   },
 };
 
-export { DateTimeHelper };
+export { DateTimeHelper, AlertHelper };
