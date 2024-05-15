@@ -1,11 +1,13 @@
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import bookingSlice from "./slices/bookingSlice";
+import favoriteSlice from "./slices/favoriteSlice";
 import { userSlice } from "./slices/userSlice";
 
 export const store = configureStore({
   reducer: {
     user: userSlice.reducer,
     booking: bookingSlice.reducer,
+    favorite: favoriteSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

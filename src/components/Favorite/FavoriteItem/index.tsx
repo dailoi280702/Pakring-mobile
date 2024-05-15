@@ -1,7 +1,7 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { Colors } from "@src/constants";
 import { AlertHelper } from "@src/utils";
-import React, { useRef } from "react";
+import { useRef } from "react";
 import {
   Animated,
   StyleSheet,
