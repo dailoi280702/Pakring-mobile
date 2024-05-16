@@ -1,4 +1,5 @@
 import { Feather } from "@expo/vector-icons";
+import TimeItem from "@src/components/Home/TimeItem";
 import AppButton from "@src/components/common/AppButton";
 import { Colors, Spacing } from "@src/constants";
 import { useAppDispatch, useAppSelector } from "@src/store/hooks";
@@ -6,7 +7,14 @@ import { selectBooking, selectTimeFrames } from "@src/store/selectors";
 import { timeFrameActions } from "@src/store/slices/timeFrameSlice";
 import dayjs from "dayjs";
 import { useEffect } from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 const ParkingDetailsScreen = ({ navigation }: any) => {
   const parkingLot: ParkingLot = useAppSelector(selectBooking).parkingLot;
@@ -45,7 +53,14 @@ const ParkingDetailsScreen = ({ navigation }: any) => {
           </Text>
           <Text style={styles.title}>Description</Text>
           <Text style={styles.title}>Parking time</Text>
-          <Text>{JSON.stringify(timeFrames)}</Text>
+          <FlatList
+            data={timeFrames}
+            renderItem={({ item }) => (
+              <TimeItem period={item.duration} cost={item.cost} />
+            )}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          />
         </View>
       </ScrollView>
       <AppButton style={styles.button} onPress={navigateNext}>
