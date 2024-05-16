@@ -9,7 +9,9 @@ type Item = {
 
 const TimeItem = (item: Item) => (
   <View style={styles.container}>
-    <Text style={styles.time}>{DateTimeHelper.convertToHour(item.period)}</Text>
+    <Text style={styles.time}>
+      {DateTimeHelper.convertToHourMinute(item.period)}
+    </Text>
     <Text style={styles.price}>{CurrencyHelper.formatVND(item.cost)}</Text>
   </View>
 );
@@ -24,7 +26,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 8,
     marginRight: 6,
-    width: 100,
+    minWidth: 100,
   },
   time: {
     fontSize: 14,
