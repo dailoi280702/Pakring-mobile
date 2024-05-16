@@ -15,6 +15,7 @@ import {
   Text,
   View,
 } from "react-native";
+import ReadMore from "@src/components/common/ReadMore";
 
 const ParkingDetailsScreen = ({ navigation }: any) => {
   const parkingLot: ParkingLot = useAppSelector(selectBooking).parkingLot;
@@ -52,6 +53,12 @@ const ParkingDetailsScreen = ({ navigation }: any) => {
             {dayjs(parkingLot.endTime).format("HH:mm")}
           </Text>
           <Text style={styles.title}>Description</Text>
+          <ReadMore
+            maxLine={4}
+            lineHeight={20}
+            content={parkingLot?.description}
+            styleText={styles.description}
+          />
           <Text style={styles.title}>Parking time</Text>
           <FlatList
             data={timeFrames}
