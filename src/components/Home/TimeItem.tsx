@@ -1,5 +1,5 @@
 import { Colors } from "@src/constants";
-import { DateTimeHelper } from "@src/utils";
+import { CurrencyHelper, DateTimeHelper } from "@src/utils";
 import { View, Text, StyleSheet } from "react-native";
 
 type Item = {
@@ -10,7 +10,7 @@ type Item = {
 const TimeItem = (item: Item) => (
   <View style={styles.container}>
     <Text style={styles.time}>{DateTimeHelper.convertToHour(item.period)}</Text>
-    <Text style={styles.price}>{item.cost} VND</Text>
+    <Text style={styles.price}>{CurrencyHelper.formatVND(item.cost)}</Text>
   </View>
 );
 
