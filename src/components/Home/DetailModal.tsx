@@ -14,6 +14,7 @@ type Props = {
   isShow: boolean;
   onClose: any;
   distance: number;
+  navigateBooking: () => void;
 };
 
 const DetailModal = (props: Props) => {
@@ -153,9 +154,7 @@ const DetailModal = (props: Props) => {
                 </View>
                 <TouchableOpacity
                   style={styles.btnBook}
-                  onPress={() => {
-                    console.log("go to booking screen");
-                  }}
+                  onPress={props.navigateBooking}
                 >
                   <Text
                     style={{
