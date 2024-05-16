@@ -1,17 +1,25 @@
 import { Feather } from "@expo/vector-icons";
 import AppButton from "@src/components/common/AppButton";
-import { Colors } from "@src/constants";
-import { useAppSelector } from "@src/store/hooks";
-import { selectBooking } from "@src/store/selectors";
+import { Colors, Spacing } from "@src/constants";
+import { useAppDispatch, useAppSelector } from "@src/store/hooks";
+import { selectBooking, selectTimeFrames } from "@src/store/selectors";
+import { timeFrameActions } from "@src/store/slices/timeFrameSlice";
 import dayjs from "dayjs";
+import { useEffect } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const ParkingDetailsScreen = ({ navigation }: any) => {
   const parkingLot: ParkingLot = useAppSelector(selectBooking).parkingLot;
+  const timeFrames = useAppSelector(selectTimeFrames);
+  const dispatch = useAppDispatch();
 
   const navigateNext = () => {
     navigation.navigate("SelectVehicleScreen");
   };
+
+  useEffect(() => {
+    dispatch(timeFrameActions.getTimeFrames(parkingLot?.id));
+  }, [parkingLot]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -37,6 +45,7 @@ const ParkingDetailsScreen = ({ navigation }: any) => {
           </Text>
           <Text style={styles.title}>Description</Text>
           <Text style={styles.title}>Parking time</Text>
+          <Text>{JSON.stringify(timeFrames)}</Text>
         </View>
       </ScrollView>
       <AppButton style={styles.button} onPress={navigateNext}>
@@ -63,13 +72,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     color: Colors.light.text,
-    marginLeft: 8,
+    marginLeft: Spacing.s,
   },
   address: {
     fontSize: 14,
     fontWeight: "600",
     color: Colors.light.text,
-    marginLeft: 8,
+    marginLeft: Spacing.s,
   },
   description: { fontSize: 14, lineHeight: 18, color: Colors.light.subtitle },
   button: { position: "absolute", bottom: 10, right: 20, left: 20 },
