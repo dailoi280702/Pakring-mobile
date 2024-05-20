@@ -1,3 +1,4 @@
+import ParkingSlotItem from "@src/components/Booking/ParkingSlotItem";
 import AppButton from "@src/components/common/AppButton";
 import { Colors } from "@src/constants";
 import { useAppDispatch, useAppSelector } from "@src/store/hooks";
@@ -34,7 +35,13 @@ const SelectParkingSlotScreen = ({ navigation }: any) => {
       <FlatList
         data={availableSlotState.blocks}
         keyExtractor={(block) => block.id}
-        renderItem={({ item }) => <Text>{JSON.stringify(item)}</Text>}
+        renderItem={({ item }) => (
+          <ParkingSlotItem
+            key={item.id}
+            block={item}
+            slots={item.parkingSlots}
+          />
+        )}
       />
       <AppButton style={styles.continueButton} onPress={navigateNext}>
         <Text style={styles.countinueText}>Countinue</Text>
