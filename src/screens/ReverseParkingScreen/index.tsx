@@ -20,6 +20,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import { timeFrameActions } from "@src/store/slices/timeFrameSlice";
+import SelectableTimeItem from "@src/components/Booking/SelectableTimeItem";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -65,6 +66,10 @@ const ReserveParkingScreen = ({ navigation }: any) => {
     }
     dispatch(bookingActions.update({ field: "startTime", value: startTime }));
     setTimeVisible(false);
+  };
+
+  const onSelectTimeFrame = (timeFrame: TimeFrame) => {
+    dispatch(bookingActions.update({ field: "timeFrame", value: timeFrame }));
   };
 
   useEffect(() => {
@@ -165,7 +170,13 @@ const ReserveParkingScreen = ({ navigation }: any) => {
           keyExtractor={(item) => item.id}
           horizontal
           showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => <Text>{JSON.stringify(item)}</Text>}
+          renderItem={({ item }) => (
+            <SelectableTimeItem
+              item={item}
+              selectedId={bookingState?.timeFrame?.id}
+              onSelect={() => onSelectTimeFrame(item)}
+            />
+          )}
         />
         <Text style={styles.title}>Total</Text>
         <Text style={styles.total}>
