@@ -20,13 +20,11 @@ const SelectVehicleScreen = ({ navigation }: any) => {
     dispatch(bookingActions.update({ field: "vehicle", value: vehicle }));
   };
 
-  const navigateToAdd = () => {
-    console.log(":TODO navigate to add vehicle screen");
-  };
+  const navigateToAdd = () => {};
 
   const navigateNext = () => {
     if (selectedVehicle) {
-      console.log(":TODO navigate to reverse parking screen");
+      navigation.navigate("ReserveParkingScreen");
     } else {
       Alert.alert("You must select your vehicle!");
     }
