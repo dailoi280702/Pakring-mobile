@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "@src/store/hooks";
 import { selectBooking, selectTimeFrames } from "@src/store/selectors";
 import { timeFrameActions } from "@src/store/slices/timeFrameSlice";
 import dayjs from "dayjs";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   FlatList,
   Image,
@@ -16,18 +16,49 @@ import {
   View,
 } from "react-native";
 import ReadMore from "@src/components/common/ReadMore";
+import { Spinner } from "@nghinv/react-native-loading";
+import { parkingSlotApi } from "@src/api";
 
 const ParkingDetailsScreen = ({ navigation }: any) => {
   const parkingLot: ParkingLot = useAppSelector(selectBooking).parkingLot;
   const timeFrames = useAppSelector(selectTimeFrames);
   const dispatch = useAppDispatch();
+  const [numOfAvailableSlots, setNumOfAvailableSlots] = useState(0);
 
   const navigateNext = () => {
-    navigation.navigate("SelectVehicleScreen");
+    if (numOfAvailableSlots > 0) {
+      navigation.navigate("SelectVehicleScreen");
+    }
   };
 
   useEffect(() => {
-    dispatch(timeFrameActions.getTimeFrames(parkingLot?.id));
+    const getNumOfSlots = async () => {
+      try {
+        Spinner.show();
+        const startTime = dayjs();
+        const endTime = startTime.add(1, "hour");
+        const slotAvailable = await parkingSlotApi.getAvailableSlots(
+          startTime.utc().format(),
+          endTime.utc().format(),
+          parkingLot?.id,
+        );
+        let num = 0;
+        if (slotAvailable.data.data) {
+          slotAvailable.data.data.forEach((e: any) => {
+            num += e.parkingSlots.length;
+          });
+        }
+        setNumOfAvailableSlots(num);
+        console.log(num);
+      } finally {
+        Spinner.hide();
+      }
+    };
+
+    if (parkingLot && parkingLot.id) {
+      dispatch(timeFrameActions.getTimeFrames(parkingLot?.id));
+      getNumOfSlots();
+    }
   }, [parkingLot]);
 
   return (
@@ -52,13 +83,17 @@ const ParkingDetailsScreen = ({ navigation }: any) => {
             {dayjs(parkingLot.startTime).format("HH:mm")} -{" "}
             {dayjs(parkingLot.endTime).format("HH:mm")}
           </Text>
-          <Text style={styles.title}>Description</Text>
-          <ReadMore
-            maxLine={4}
-            lineHeight={20}
-            content={parkingLot?.description}
-            styleText={styles.description}
-          />
+          {parkingLot.description && (
+            <>
+              <Text style={styles.title}>Description</Text>
+              <ReadMore
+                maxLine={4}
+                lineHeight={20}
+                content={parkingLot?.description}
+                styleText={styles.description}
+              />
+            </>
+          )}
           <Text style={styles.title}>Parking time</Text>
           <FlatList
             data={timeFrames}
@@ -70,8 +105,16 @@ const ParkingDetailsScreen = ({ navigation }: any) => {
           />
         </View>
       </ScrollView>
-      <AppButton style={styles.button} onPress={navigateNext}>
-        <Text style={styles.textButton}>Book now</Text>
+      <AppButton
+        style={{
+          ...styles.button,
+          opacity: numOfAvailableSlots > 0 ? 1 : 0.8,
+        }}
+        onPress={navigateNext}
+      >
+        <Text style={styles.textButton}>
+          {numOfAvailableSlots > 0 ? "Book now" : "No slots available"}
+        </Text>
       </AppButton>
     </View>
   );
@@ -103,7 +146,12 @@ const styles = StyleSheet.create({
     marginLeft: Spacing.s,
   },
   description: { fontSize: 14, lineHeight: 18, color: Colors.light.subtitle },
-  button: { position: "absolute", bottom: 10, right: 20, left: 20 },
+  button: {
+    position: "absolute",
+    bottom: 10,
+    right: 20,
+    left: 20,
+  },
   textButton: {
     color: Colors.light.background,
     fontSize: 18,
