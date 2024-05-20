@@ -1,5 +1,6 @@
+import { Images } from "@src/assets";
 import { Colors } from "@src/constants";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface IProps {
   item: Vehicle;
@@ -8,11 +9,21 @@ interface IProps {
 }
 
 const SelectableVehicleItem = ({ item, checkedId, handleSelect }: IProps) => {
+  const renderTag = (type: string) => {
+    const vehicleType = type.charAt(0).toUpperCase() + type.slice(1);
+    type ImageKey = keyof typeof Images;
+    return (
+      <View style={styles.tag}>
+        <Image source={Images[vehicleType as ImageKey]} style={styles.image} />
+      </View>
+    );
+  };
   return (
     <TouchableOpacity
       style={[styles.item, checkedId == item.id && styles.selectedItem]}
       onPress={() => handleSelect(item)}
     >
+      {renderTag(item.type)}
       <View style={styles.wrapper}>
         <Text style={styles.title} numberOfLines={2}>
           {item.name}
@@ -51,6 +62,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   selectedItem: { borderColor: Colors.light.primary },
+  tag: { paddingHorizontal: 8, marginRight: 12 },
   image: { width: 40, height: 40 },
   wrapper: { flex: 1, marginRight: 12 },
   title: { fontSize: 20, color: Colors.light.heading, fontWeight: "600" },
