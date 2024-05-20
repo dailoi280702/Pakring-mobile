@@ -6,6 +6,7 @@ import { Platform } from "react-native";
 import ParkingDetailsScreen from "@src/screens/ParkingDetailsScreen";
 import SelectVehicleScreen from "@src/screens/Booking/SelectVehicleScreen";
 import ReserveParkingScreen from "@src/screens/ReverseParkingScreen";
+import SelectParkingSlotScreen from "@src/screens/Booking/SelectParkingSlotScreen";
 
 const Stack = createNativeStackNavigator<HomeStackParams>();
 
@@ -65,6 +66,15 @@ const HomeStack = () => {
         component={ReserveParkingScreen}
         options={{
           title: "Reserve parking",
+          ...headerOption,
+        }}
+      />
+
+      <Stack.Screen
+        name="SelectParkingSlotScreen"
+        component={SelectParkingSlotScreen}
+        options={{
+          title: "Select parking slot",
           ...headerOption,
         }}
       />
