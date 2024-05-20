@@ -8,6 +8,7 @@ import SelectVehicleScreen from "@src/screens/Booking/SelectVehicleScreen";
 import ReserveParkingScreen from "@src/screens/ReverseParkingScreen";
 import SelectParkingSlotScreen from "@src/screens/Booking/SelectParkingSlotScreen";
 import SelectPaymentScreen from "@src/screens/Booking/SelectPaymentScreen";
+import SummaryScreen from "@src/screens/Booking/SummaryScreen";
 
 const Stack = createNativeStackNavigator<HomeStackParams>();
 
@@ -85,6 +86,15 @@ const HomeStack = () => {
         component={SelectPaymentScreen}
         options={{
           title: "Select payment method",
+          ...headerOption,
+        }}
+      />
+
+      <Stack.Screen
+        name="SummaryScreen"
+        component={SummaryScreen}
+        options={{
+          title: "Review summary",
           ...headerOption,
         }}
       />
