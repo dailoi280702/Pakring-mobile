@@ -1,16 +1,42 @@
 import AppButton from "@src/components/common/AppButton";
 import { Colors } from "@src/constants";
-import { useAppSelector } from "@src/store/hooks";
+import { useAppDispatch, useAppSelector } from "@src/store/hooks";
 import { selectBooking } from "@src/store/selectors";
-import { StyleSheet, Text, View } from "react-native";
+import { availableSlotsActions } from "@src/store/slices/availableSlotSlice";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import { useEffect } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 
 const SelectParkingSlotScreen = ({ navigation }: any) => {
   const bookingState = useAppSelector(selectBooking);
+  const dispatch = useAppDispatch();
+  const availableSlotState = useAppSelector((state) => state.availableSlot);
+  const navigateNext = () => {
+    navigation.navigate("SelectPaymentScreen");
+  };
+
+  useEffect(() => {
+    const getSlots = async () => {
+      dayjs.extend(utc);
+      const data = {
+        start: dayjs(bookingState.startTime).utc().format(),
+        end: dayjs(bookingState.endTime).utc().format(),
+        idParkingLot: bookingState.parkingLot.id,
+      };
+      dispatch(availableSlotsActions.getAvailableSlots(data));
+    };
+    getSlots();
+  }, []);
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 20 }}>
-      <Text>{JSON.stringify(bookingState)}</Text>
-      <AppButton style={styles.continueButton}>
+      <FlatList
+        data={availableSlotState.blocks}
+        keyExtractor={(block) => block.id}
+        renderItem={({ item }) => <Text>{JSON.stringify(item)}</Text>}
+      />
+      <AppButton style={styles.continueButton} onPress={navigateNext}>
         <Text style={styles.countinueText}>Countinue</Text>
       </AppButton>
     </View>
