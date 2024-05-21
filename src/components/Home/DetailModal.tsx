@@ -36,7 +36,8 @@ const DetailModal = (props: Props) => {
     if (isShow === true) {
       onOpenBottomSheetHandler(0);
     } else {
-      onOpenBottomSheetHandler(-1);
+      ref?.current?.close();
+      // onOpenBottomSheetHandler(-1);
     }
   }, [isShow]);
 

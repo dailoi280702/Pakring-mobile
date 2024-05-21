@@ -11,6 +11,7 @@ import { CurrencyHelper, DateTimeHelper } from "@src/utils";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { Alert, Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const Item = ({ title, value }: { title: string; value: string }) => {
   return (
@@ -147,6 +148,21 @@ const SummaryScreen = ({ navigation }: any) => {
             <Text style={styles.cash} numberOfLines={2}>
               Cash
             </Text>
+          </View>
+          <View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("SelectPaymentScreen")}
+            >
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: Colors.light.primary,
+                  fontWeight: 500,
+                }}
+              >
+                Chanage payment method
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>

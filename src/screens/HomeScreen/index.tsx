@@ -1,5 +1,3 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { AppStackParams } from "@src/navigation/AppNavigator/types";
 import { StatusBar } from "expo-status-bar";
 import { Keyboard, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { View } from "react-native";
@@ -9,15 +7,14 @@ import { useState } from "react";
 import { useAppDispatch } from "@src/store/hooks";
 import { bookingActions } from "@src/store/slices/bookingSlice";
 
-type Props = NativeStackScreenProps<AppStackParams, "Home">;
-
-const HomeScreen = ({ navigation }: Props) => {
+const HomeScreen = ({ navigation }: { navigation: any }) => {
   const [isShowDetail, setIsShowDetail] = useState(false);
   const [distance, setDistance] = useState(0);
 
   const dispatch = useAppDispatch();
 
   const navigateBooking = () => {
+    setIsShowDetail(false);
     navigation.navigate("ParkingDetailsScreen");
   };
 
