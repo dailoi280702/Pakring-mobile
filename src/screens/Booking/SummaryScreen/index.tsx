@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Images } from "@src/assets";
 import AppButton from "@src/components/common/AppButton";
+import AppModalMessage from "@src/components/common/AppModalMessage";
 import { Colors } from "@src/constants";
 import { useAppDispatch, useAppSelector } from "@src/store/hooks";
 import { selectBooking, selectUser } from "@src/store/selectors";
@@ -8,6 +9,7 @@ import { bookingActions } from "@src/store/slices/bookingSlice";
 import { ticketActions } from "@src/store/slices/ticketSlice";
 import { CurrencyHelper, DateTimeHelper } from "@src/utils";
 import dayjs from "dayjs";
+import { useState } from "react";
 import { Alert, Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const Item = ({ title, value }: { title: string; value: string }) => {
@@ -23,6 +25,8 @@ const SummaryScreen = ({ navigation }: any) => {
   const bookingState = useAppSelector(selectBooking);
   const userState = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
+  const [isVisible, setVisible] = useState<boolean>(false);
+  const [isSuccess, setSuccess] = useState<boolean>(false);
 
   const confirmBooking = async () => {
     const idUser = await AsyncStorage.getItem("idUser");
@@ -61,16 +65,10 @@ const SummaryScreen = ({ navigation }: any) => {
           }),
         );
 
-        Alert.prompt("done", "booking sucessfull", [
-          {
-            text: "back to home",
-            onPress: () => {
-              navigation.naviate("HomeScreen");
-            },
-          },
-        ]);
+        setSuccess(true);
       })
       .catch((err) => {
+        setSuccess(false);
         Alert.prompt("fail", String(err), [
           {
             text: "back to home",
@@ -80,7 +78,15 @@ const SummaryScreen = ({ navigation }: any) => {
           },
         ]);
         console.log(err);
+      })
+      .finally(() => {
+        setVisible(true);
       });
+  };
+
+  const navigateNext = (isSuccess: boolean) => {
+    setVisible(false);
+    navigation.navigate("HomeScreen");
   };
 
   return (
@@ -145,8 +151,20 @@ const SummaryScreen = ({ navigation }: any) => {
         </View>
       </ScrollView>
       <AppButton style={styles.continueButton} onPress={confirmBooking}>
-        <Text style={styles.countinueText}>Confirm payment</Text>
+        <Text style={styles.countinueText}>Book now</Text>
       </AppButton>
+
+      {isVisible && (
+        <AppModalMessage
+          isVisible={isVisible}
+          isSuccess={isSuccess}
+          onOk={() => navigateNext(isSuccess)}
+          okText={isSuccess ? "View parking ticket" : "Back to home"}
+          message={
+            isSuccess ? "Successfully made ticket" : "There is an error!"
+          }
+        />
+      )}
     </View>
   );
 };
@@ -175,9 +193,9 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginVertical: 8,
   },
-  title: { fontSize: 15, fontWeight: "500", color: Colors.light.subtitle },
+  title: { fontSize: 14, fontWeight: "500", color: Colors.light.subtitle },
   value: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "600",
     color: Colors.light.text,
     textAlign: "right",
