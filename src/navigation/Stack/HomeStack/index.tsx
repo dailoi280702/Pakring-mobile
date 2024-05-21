@@ -9,6 +9,7 @@ import ReserveParkingScreen from "@src/screens/ReverseParkingScreen";
 import SelectParkingSlotScreen from "@src/screens/Booking/SelectParkingSlotScreen";
 import SelectPaymentScreen from "@src/screens/Booking/SelectPaymentScreen";
 import SummaryScreen from "@src/screens/Booking/SummaryScreen";
+import ParkingTicketScreen from "@src/screens/Booking/ParkingTicketScreen";
 
 const Stack = createNativeStackNavigator<HomeStackParams>();
 
@@ -96,6 +97,14 @@ const HomeStack = () => {
         options={{
           title: "Review summary",
           ...headerOption,
+        }}
+      />
+
+      <Stack.Screen
+        name="ParkingTicketScreen"
+        component={ParkingTicketScreen}
+        options={{
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

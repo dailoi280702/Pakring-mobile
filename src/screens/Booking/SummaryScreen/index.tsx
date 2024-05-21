@@ -87,7 +87,11 @@ const SummaryScreen = ({ navigation }: any) => {
 
   const navigateNext = (isSuccess: boolean) => {
     setVisible(false);
-    navigation.navigate("HomeScreen");
+    if (isSuccess) {
+      navigation.navigate("ParkingTicketScreen");
+    } else {
+      navigation.navigate("HomeScreen");
+    }
   };
 
   return (
