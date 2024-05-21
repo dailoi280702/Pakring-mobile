@@ -14,10 +14,10 @@ import {
 } from "react-native";
 import { ClipboardDocumentListIcon } from "react-native-heroicons/outline";
 
-import QRCode from "react-native-qrcode-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ViewShot from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
+import AppQRCode from "@src/components/Booking/QRCode";
 
 const Item = ({ title, value }: { title: string; value: string }) => {
   return (
@@ -85,7 +85,10 @@ const ParkingTicketScreen = ({ navigation }: any) => {
             </Text>
             <ViewShot ref={ref} options={{ format: "png" }}>
               <View style={styles.imageView}>
-                <QRCode size={200} value={bookingState.idTicket} />
+                <AppQRCode
+                  size={200}
+                  content={"parking" + bookingState.idTicket}
+                />
               </View>
             </ViewShot>
           </View>
