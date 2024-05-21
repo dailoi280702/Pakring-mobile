@@ -10,3 +10,4 @@ export const selectCompletedTickets = (state: RootState) =>
   state.ticket.completedBooking;
 export const selectCancelTickets = (state: RootState) =>
   state.ticket.cancelBooking;
+export const selectUser = (state: RootState) => state.user.data;

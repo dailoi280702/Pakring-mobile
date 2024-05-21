@@ -4,6 +4,7 @@ import timeFrameSlice from "./slices/timeFrameSlice";
 import { vehicleSlice } from "./slices/vehicleSlice";
 import availableSlotSlice from "./slices/availableSlotSlice";
 import ticketSlice from "./slices/ticketSlice";
+import { userSlice } from "./slices/userSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     vehicles: vehicleSlice.reducer,
     availableSlot: availableSlotSlice.reducer,
     ticket: ticketSlice.reducer,
+    user: userSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
