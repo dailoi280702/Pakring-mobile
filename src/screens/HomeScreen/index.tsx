@@ -14,7 +14,12 @@ type Props = NativeStackScreenProps<AppStackParams, "Home">;
 const HomeScreen = ({ navigation }: Props) => {
   const [isShowDetail, setIsShowDetail] = useState(false);
   const [distance, setDistance] = useState(0);
+
   const dispatch = useAppDispatch();
+
+  const navigateBooking = () => {
+    navigation.navigate("ParkingDetailsScreen");
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -39,6 +44,7 @@ const HomeScreen = ({ navigation }: Props) => {
           isShow={isShowDetail}
           onClose={() => setIsShowDetail(false)}
           distance={distance}
+          navigateBooking={navigateBooking}
         />
       </View>
     </TouchableWithoutFeedback>
