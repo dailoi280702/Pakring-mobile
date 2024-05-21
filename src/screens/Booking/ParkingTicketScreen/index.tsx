@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "@src/store/hooks";
 import { selectBooking, selectUser } from "@src/store/selectors";
 import { bookingActions } from "@src/store/slices/bookingSlice";
 import { DateTimeHelper } from "@src/utils";
+import { useRef } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -15,6 +16,8 @@ import { ClipboardDocumentListIcon } from "react-native-heroicons/outline";
 
 import QRCode from "react-native-qrcode-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
+import ViewShot from "react-native-view-shot";
+import * as Sharing from "expo-sharing";
 
 const Item = ({ title, value }: { title: string; value: string }) => {
   return (
@@ -33,10 +36,31 @@ const ParkingTicketScreen = ({ navigation }: any) => {
   const bookingState = useAppSelector(selectBooking);
   const dispatch = useAppDispatch();
   const userState = useAppSelector(selectUser);
+  const ref = useRef(null);
 
   const navigationHome = () => {
     dispatch(bookingActions.reset());
     navigation.navigate("HomeScreen");
+  };
+
+  const captureAndShare = async () => {
+    try {
+      const uri = await ref.current.capture();
+      await shareImage(uri);
+    } catch (error) {
+      console.error("Error capturing image:", error);
+    }
+  };
+
+  const shareImage = async (uri: any) => {
+    try {
+      await Sharing.shareAsync(uri, {
+        mimeType: "image/png",
+        dialogTitle: "Share Image",
+      });
+    } catch (error) {
+      console.error("Error sharing image:", error);
+    }
   };
 
   return (
@@ -45,7 +69,7 @@ const ParkingTicketScreen = ({ navigation }: any) => {
         <View style={{ flex: 1 }}>
           <Text style={styles.headerText}>Parking ticket</Text>
         </View>
-        <TouchableOpacity style={styles.copy}>
+        <TouchableOpacity style={styles.copy} onPress={captureAndShare}>
           <ClipboardDocumentListIcon size={24} color={Colors.light.primary} />
         </TouchableOpacity>
       </View>
@@ -59,7 +83,11 @@ const ParkingTicketScreen = ({ navigation }: any) => {
             <Text style={styles.note}>
               Scan this when you are in the parking lot
             </Text>
-            <QRCode size={200} value={bookingState.idTicket} />
+            <ViewShot ref={ref} options={{ format: "png" }}>
+              <View style={styles.imageView}>
+                <QRCode size={200} value={bookingState.idTicket} />
+              </View>
+            </ViewShot>
           </View>
 
           <Text style={styles.dash} ellipsizeMode="clip" numberOfLines={1}>
@@ -143,7 +171,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     backgroundColor: Colors.light.background,
     borderRadius: 16,
-    paddingVertical: 20,
+    paddingVertical: 12,
     paddingHorizontal: 16,
     shadowColor: "#6F7EC9",
     shadowOffset: {
@@ -188,5 +216,9 @@ const styles = StyleSheet.create({
     color: Colors.light.background,
     fontSize: 18,
     fontWeight: "600",
+  },
+  imageView: {
+    padding: 12,
+    backgroundColor: Colors.light.background,
   },
 });
