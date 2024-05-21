@@ -51,20 +51,25 @@ const ParkingTicketScreen = ({ navigation }: any) => {
       </View>
 
       <ScrollView
-        style={{ paddingVertical: 24 }}
+        style={{ paddingVertical: 4 }}
         showsVerticalScrollIndicator={false}
       >
-        <View style={{ flex: 1, paddingBottom: 100 }}>
+        <View style={{ flex: 1, paddingBottom: 96 }}>
           <View style={styles.card}>
             <Text style={styles.note}>
               Scan this when you are in the parking lot
             </Text>
-            <QRCode value={bookingState.idTicket} />
+            <QRCode size={200} value={bookingState.idTicket} />
           </View>
+
+          <Text style={styles.dash} ellipsizeMode="clip" numberOfLines={1}>
+            - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            - - - - - - - - - - - - - - - - - - - -
+          </Text>
           <View
             style={[
               styles.card,
-              { alignItems: "flex-start", paddingVertical: 12 },
+              { alignItems: "flex-start", paddingVertical: 8 },
             ]}
           >
             <Item title={"Name"} value={userState?.displayName} />
@@ -135,7 +140,7 @@ const styles = StyleSheet.create({
   },
   copy: {},
   card: {
-    marginHorizontal: 20,
+    marginHorizontal: 8,
     backgroundColor: Colors.light.background,
     borderRadius: 16,
     paddingVertical: 20,
@@ -156,7 +161,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   code: { width: 180, height: 180 },
-  dash: { marginHorizontal: 34 },
+  dash: { marginHorizontal: 24 },
   bottom: {
     flexDirection: "row",
   },
@@ -164,13 +169,13 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginVertical: 8,
   },
-  title: { fontSize: 14, fontWeight: "500", color: Colors.light.subtitle },
+  title: { fontSize: 12, fontWeight: "500", color: Colors.light.subtitle },
   value: { fontSize: 16, fontWeight: "600", color: Colors.light.text },
   address: {
     fontSize: 14,
     fontWeight: "500",
     color: Colors.light.text,
-    marginTop: -5,
+    marginBottom: 12,
   },
   continueButton: {
     marginTop: 12,
