@@ -18,4 +18,4 @@ const DateTimeHelper = {
   },
 };
 
-export { DateTimeHelper, AlertHelper };
+export { DateTimeHelper, AlertHelper, UploadHelper };
