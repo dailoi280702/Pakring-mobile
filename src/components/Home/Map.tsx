@@ -35,8 +35,9 @@ const Map = (props: Props) => {
       latitude: Number(location.lat),
     };
 
-    if (!parkings.find((p) => p.id == location.id))
+    if (!parkings.find((p) => p.id == location.id)) {
       setParkings((old) => [...old, location]);
+    }
 
     if (!locations.includes(tmp)) {
       var locationTmp = locations;
