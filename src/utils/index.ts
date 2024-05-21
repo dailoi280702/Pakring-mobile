@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import AlertHelper from "./AlertHelper";
+import UploadHelper from "./uploadHelper";
 
 const DateTimeHelper = {
   formatDate: (date: Date) => dayjs(date).format("DD/MM/YYYY"),

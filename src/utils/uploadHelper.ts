@@ -49,7 +49,8 @@ const UploadHelper = {
     });
 
     if (!pickerResult.canceled) {
-      const result = pickerResult as ImagePicker.ImageInfo;
+      // const result = pickerResult as ImagePicker.ImageInfo;
+      const result = pickerResult.assets[0];
       imgURI = result.uri;
 
       const response = await fetch(imgURI);
