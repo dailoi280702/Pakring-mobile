@@ -1,3 +1,4 @@
 import Colors from "./colors";
+import Layout from "./layout";
 
-export { Colors };
+export { Colors, Layout };
