@@ -161,7 +161,9 @@ const SummaryScreen = ({ navigation }: any) => {
           onOk={() => navigateNext(isSuccess)}
           okText={isSuccess ? "View parking ticket" : "Back to home"}
           message={
-            isSuccess ? "Successfully made ticket" : "There is an error!"
+            isSuccess
+              ? "Successfully made ticket"
+              : "Something went wrong while booking, maybe the slot was taken, please try again"
           }
         />
       )}
