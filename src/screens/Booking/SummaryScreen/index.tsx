@@ -1,9 +1,11 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Images } from "@src/assets";
 import AppButton from "@src/components/common/AppButton";
 import { Colors } from "@src/constants";
 import { useAppSelector } from "@src/store/hooks";
-import { selectBooking } from "@src/store/selectors";
+import { selectBooking, selectUser } from "@src/store/selectors";
 import { CurrencyHelper, DateTimeHelper } from "@src/utils";
+import dayjs from "dayjs";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const Item = ({ title, value }: { title: string; value: string }) => {
@@ -17,9 +19,23 @@ const Item = ({ title, value }: { title: string; value: string }) => {
 
 const SummaryScreen = ({ navigation }: any) => {
   const bookingState = useAppSelector(selectBooking);
+  const userState = useAppSelector(selectUser);
 
   const confirmBooking = async () => {
-    console.log(":TODO impl confirm booking");
+    const idUser = await AsyncStorage.getItem("idUser");
+
+    const data = {
+      vehicleId: bookingState.vehicle?.id,
+      userId: userState?.id || idUser,
+      parkingSlotId: bookingState.parkingSlot?.id,
+      parkingLotId: bookingState.parkingLot?.id,
+      timeFrameId: bookingState.timeFrame?.id,
+      startTime: dayjs(bookingState.startTime).utc().format(),
+      endTime: dayjs(bookingState.endTime).utc().format(),
+      total: bookingState.timeFrame?.cost,
+    };
+
+    console.log(data);
   };
 
   return (
