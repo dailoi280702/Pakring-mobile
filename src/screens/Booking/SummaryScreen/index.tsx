@@ -2,11 +2,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Images } from "@src/assets";
 import AppButton from "@src/components/common/AppButton";
 import { Colors } from "@src/constants";
-import { useAppSelector } from "@src/store/hooks";
+import { useAppDispatch, useAppSelector } from "@src/store/hooks";
 import { selectBooking, selectUser } from "@src/store/selectors";
+import { bookingActions } from "@src/store/slices/bookingSlice";
+import { ticketActions } from "@src/store/slices/ticketSlice";
 import { CurrencyHelper, DateTimeHelper } from "@src/utils";
 import dayjs from "dayjs";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const Item = ({ title, value }: { title: string; value: string }) => {
   return (
@@ -20,6 +22,7 @@ const Item = ({ title, value }: { title: string; value: string }) => {
 const SummaryScreen = ({ navigation }: any) => {
   const bookingState = useAppSelector(selectBooking);
   const userState = useAppSelector(selectUser);
+  const dispatch = useAppDispatch();
 
   const confirmBooking = async () => {
     const idUser = await AsyncStorage.getItem("idUser");
@@ -36,6 +39,48 @@ const SummaryScreen = ({ navigation }: any) => {
     };
 
     console.log(data);
+
+    dispatch(
+      ticketActions.createTicket({
+        vehicleId: bookingState.vehicle?.id,
+        userId: userState?.id || idUser,
+        parkingSlotId: bookingState.parkingSlot?.id,
+        parkingLotId: bookingState.parkingLot?.id,
+        timeFrameId: bookingState.timeFrame?.id,
+        startTime: dayjs(bookingState.startTime).utc().format(),
+        endTime: dayjs(bookingState.endTime).utc().format(),
+        total: bookingState.timeFrame?.cost,
+      }),
+    )
+      .unwrap()
+      .then((res) => {
+        dispatch(
+          bookingActions.update({
+            field: "idTicket",
+            value: res.id,
+          }),
+        );
+
+        Alert.prompt("done", "booking sucessfull", [
+          {
+            text: "back to home",
+            onPress: () => {
+              navigation.naviate("HomeScreen");
+            },
+          },
+        ]);
+      })
+      .catch((err) => {
+        Alert.prompt("fail", String(err), [
+          {
+            text: "back to home",
+            onPress: () => {
+              navigation.naviate("HomeScreen");
+            },
+          },
+        ]);
+        console.log(err);
+      });
   };
 
   return (
