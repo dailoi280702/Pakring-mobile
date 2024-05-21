@@ -87,7 +87,11 @@ const SummaryScreen = ({ navigation }: any) => {
 
   const navigateNext = (isSuccess: boolean) => {
     setVisible(false);
-    navigation.navigate("HomeScreen");
+    if (isSuccess) {
+      navigation.navigate("ParkingTicketScreen");
+    } else {
+      navigation.navigate("HomeScreen");
+    }
   };
 
   return (
@@ -191,12 +195,12 @@ export default SummaryScreen;
 
 const styles = StyleSheet.create({
   card: {
-    marginTop: 20,
+    marginTop: 4,
     marginHorizontal: 20,
     backgroundColor: Colors.light.background,
     borderRadius: 6,
     paddingVertical: 4,
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
     shadowColor: "#6F7EC9",
     shadowOffset: {
       width: -1,
