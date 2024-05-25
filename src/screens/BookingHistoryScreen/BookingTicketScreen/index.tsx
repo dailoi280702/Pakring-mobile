@@ -176,7 +176,7 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
               <View style={styles.imageView}>
                 <AppQRCode
                   size={200}
-                  content={"parkar" + ticketWithExtend.id}
+                  content={"parking" + ticketWithExtend.id}
                 />
               </View>
             </ViewShot>

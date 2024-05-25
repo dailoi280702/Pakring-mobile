@@ -64,7 +64,7 @@ const SignUp = (props: Props) => {
       }
       const phoneNumber = `+84${values.phoneNumber.slice(
         1,
-        values.phoneNumber.length
+        values.phoneNumber.length,
       )}`;
       await authApi.sendOtp(phoneNumber);
       props.navigation.navigate("Verification", {
@@ -134,7 +134,7 @@ const SignUp = (props: Props) => {
                       />
                       <TextInput
                         onChangeText={handleChange("email")}
-                        placeholder="parka@gmail.com"
+                        placeholder="parking@gmail.com"
                         placeholderTextColor="#CBD5E1"
                         value={values.email}
                         style={styles.input}
