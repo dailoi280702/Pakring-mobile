@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: ColorHelper.hexToRgbA(Colors.light.primary, 0.2),
+    shadowColor: "transparent",
     marginTop: 12,
     marginBottom: 50,
   },
