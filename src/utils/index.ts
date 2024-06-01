@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import AlertHelper from "./AlertHelper";
 import UploadHelper from "./UploadHelper";
 import ColorHelper from "./ColorHelper";
+import CurrencyHelper from "./CurrencyHelper";
 
 const DateTimeHelper = {
   formatDate: (date: Date) => dayjs(date).format("DD/MM/YYYY"),
@@ -20,4 +21,4 @@ const DateTimeHelper = {
   },
 };
 
-export { DateTimeHelper, AlertHelper, UploadHelper, ColorHelper };
+export { DateTimeHelper, AlertHelper, UploadHelper, ColorHelper, CurrencyHelper};

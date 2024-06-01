@@ -1,4 +1,4 @@
 import Colors from "./colors";
 import Layout from "./layout";
-
-export { Colors, Layout };
+import Spacing from "./spacing";
+export { Colors, Layout, Spacing };

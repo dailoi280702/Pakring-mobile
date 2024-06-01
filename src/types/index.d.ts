@@ -3,6 +3,7 @@ type User = {
   displayName: string;
   email: string;
   phoneNumber: string;
+  socialId?: string;
   imageUrl: string;
 };
 
@@ -18,12 +19,28 @@ type ParkingLot = {
   companyId: string;
 };
 
+type Vehicle = {
+  id?: string;
+  userId: string;
+  name: string;
+  number: string;
+  type: string;
+};
+
+type ParkingSlot = {
+  id: string;
+  blockId: string;
+  block: Block | null;
+  name: string;
+};
+
 type Block = {
   id: string;
   parkingLotId: string;
   code: string;
   description: string;
   slot: number;
+  parkingSlots: ParkingSlot[];
 };
 
 type TimeFrame = {
@@ -65,11 +82,14 @@ type Ticket = {
   isExtend: boolean;
   ticketExtend: Ticket[];
 };
-
-type Vehicle = {
-  id?: string;
+type Favorite = {
+  id: string;
   userId: string;
-  name: string;
-  number: string;
-  type: string;
+  parkingLotId: string;
+  parkingLot?: ParkingLot;
+};
+
+type Location = {
+  latitude: number;
+  longitude: number;
 };

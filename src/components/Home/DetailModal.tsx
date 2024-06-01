@@ -4,16 +4,22 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { parkingSlotApi } from "@src/api";
 import { Colors } from "@src/constants";
 import { useAppSelector } from "@src/store/hooks";
 import { selectBooking } from "@src/store/selectors";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import { Spinner } from "@nghinv/react-native-loading";
+dayjs.extend(utc);
 
 type Props = {
   isShow: boolean;
   onClose: any;
   distance: number;
+  navigateBooking: () => void;
 };
 
 const DetailModal = (props: Props) => {
@@ -30,9 +36,39 @@ const DetailModal = (props: Props) => {
     if (isShow === true) {
       onOpenBottomSheetHandler(0);
     } else {
-      onOpenBottomSheetHandler(-1);
+      ref?.current?.close();
+      // onOpenBottomSheetHandler(-1);
     }
   }, [isShow]);
+
+  useEffect(() => {
+    const getNumOfSlots = async () => {
+      try {
+        Spinner.show();
+        const startTime = dayjs();
+        const endTime = startTime.add(1, "hour");
+        const slotAvailable = await parkingSlotApi.getAvailableSlots(
+          startTime.utc().format(),
+          endTime.utc().format(),
+          parkingLot?.id,
+        );
+        let num = 0;
+        if (slotAvailable.data.data) {
+          slotAvailable.data.data.forEach((e: any) => {
+            num += e.parkingSlots.length;
+          });
+        }
+        setNumOfAvailableSlots(num);
+        console.log(num);
+      } finally {
+        Spinner.hide();
+      }
+    };
+
+    if (parkingLot && parkingLot.id) {
+      getNumOfSlots();
+    }
+  }, [parkingLot]);
 
   return (
     <>
@@ -153,9 +189,7 @@ const DetailModal = (props: Props) => {
                 </View>
                 <TouchableOpacity
                   style={styles.btnBook}
-                  onPress={() => {
-                    console.log("go to booking screen");
-                  }}
+                  onPress={props.navigateBooking}
                 >
                   <Text
                     style={{
