@@ -7,7 +7,7 @@ import userApi from "./userApi";
 import vehicleApi from "./vehicleApi";
 
 export {
-  favoriteApi
+  favoriteApi,
   parkingLotApi,
   parkingSlotApi,
   ticketApi,
@@ -15,4 +15,3 @@ export {
   userApi,
   vehicleApi,
 };
-
