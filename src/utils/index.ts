@@ -1,5 +1,24 @@
-import CurrencyHelper from "./CurrencyHelper";
-import DateTimeHelper from "./DateTimeHelper";
+import dayjs from "dayjs";
+import AlertHelper from "./AlertHelper";
+import UploadHelper from "./UploadHelper";
 import ColorHelper from "./ColorHelper";
+import CurrencyHelper from "./CurrencyHelper";
 
-export { DateTimeHelper, CurrencyHelper, ColorHelper };
+const DateTimeHelper = {
+  formatDate: (date: Date) => dayjs(date).format("DD/MM/YYYY"),
+  formatTime: (time: Date) => dayjs(time).format("HH:mm"),
+  getRoundUpDate: (minutes: number, d = new Date()) => {
+    const ms = 1000 * 60 * minutes;
+    const roundedDate = new Date(Math.ceil(d.getTime() / ms) * ms);
+    return roundedDate;
+  },
+  convertToHour: (minutes: number) => {
+    if (minutes < 60) {
+      return `${minutes} minutes`;
+    }
+    const hour = minutes / 60;
+    return hour > 1 ? `${hour} hours` : `${hour} hour`;
+  },
+};
+
+export { DateTimeHelper, AlertHelper, UploadHelper, ColorHelper, CurrencyHelper};
