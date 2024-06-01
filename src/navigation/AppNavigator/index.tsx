@@ -10,6 +10,7 @@ import ResetPassword from "@src/screens/Authentication/ResetPassword";
 import Verification from "@src/screens/Authentication/Verification";
 import ChangePassword from "@src/screens/Authentication/ChangePassword";
 import { Colors } from "@src/constants";
+import ExtendTicketScreen from "@src/screens/Booking/ExtendTicketScreen";
 
 const Stack = createNativeStackNavigator<AppStackParams>();
 
