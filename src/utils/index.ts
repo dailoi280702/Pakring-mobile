@@ -21,4 +21,10 @@ const DateTimeHelper = {
   },
 };
 
-export { DateTimeHelper, AlertHelper, UploadHelper, ColorHelper, CurrencyHelper};
+export {
+  DateTimeHelper,
+  AlertHelper,
+  UploadHelper,
+  ColorHelper,
+  CurrencyHelper,
+};

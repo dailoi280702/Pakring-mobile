@@ -16,7 +16,6 @@ export const store = configureStore({
     vehicles: vehicleSlice.reducer,
     availableSlot: availableSlotSlice.reducer,
     ticket: ticketSlice.reducer,
-    user: userSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
