@@ -17,13 +17,14 @@ import {
 } from "react-native";
 import ReadMore from "@src/components/common/ReadMore";
 import { Spinner } from "@nghinv/react-native-loading";
-import { parkingSlotApi } from "@src/api";
+import { parkingLotApi, parkingSlotApi } from "@src/api";
 
 const ParkingDetailsScreen = ({ navigation }: any) => {
   const parkingLot: ParkingLot = useAppSelector(selectBooking).parkingLot;
   const timeFrames = useAppSelector(selectTimeFrames);
   const dispatch = useAppDispatch();
   const [numOfAvailableSlots, setNumOfAvailableSlots] = useState(0);
+  const [parkingLotInfo, setParkingLotInfo] = useState<ParkingLotInfo>();
 
   const navigateNext = () => {
     if (numOfAvailableSlots > 0) {
@@ -49,7 +50,18 @@ const ParkingDetailsScreen = ({ navigation }: any) => {
           });
         }
         setNumOfAvailableSlots(num);
-        console.log(num);
+      } finally {
+        Spinner.hide();
+      }
+    };
+
+    const getParkingLotInfo = async () => {
+      try {
+        Spinner.show();
+        const res = await parkingLotApi.getListInfo([parkingLot.id]);
+        if (res.data.data && res.data.data.length && res.data.data.length > 0) {
+          setParkingLotInfo(res.data.data[0]);
+        }
       } finally {
         Spinner.hide();
       }
@@ -58,6 +70,7 @@ const ParkingDetailsScreen = ({ navigation }: any) => {
     if (parkingLot && parkingLot.id) {
       dispatch(timeFrameActions.getTimeFrames(parkingLot?.id));
       getNumOfSlots();
+      getParkingLotInfo();
     }
   }, [parkingLot]);
 
@@ -78,6 +91,22 @@ const ParkingDetailsScreen = ({ navigation }: any) => {
               {parkingLot?.address}
             </Text>
           </View>
+          {parkingLotInfo && (
+            <>
+              <Text style={styles.title}>Reviews</Text>
+              <View style={[styles.flexRow, { gap: 4 }]}>
+                <Text style={styles.address}>
+                  Total booked slot: {parkingLotInfo.totalBookedSlots}
+                </Text>
+                <Text style={[styles.address, { color: Colors.light.success }]}>
+                  Good reviews: {parkingLotInfo.goodReviews}
+                </Text>
+                <Text style={[styles.address, { color: Colors.light.warning }]}>
+                  Bad reviews: {parkingLotInfo.badReviews}
+                </Text>
+              </View>
+            </>
+          )}
           <Text style={styles.title}>Operating hours</Text>
           <Text style={styles.hour}>
             {dayjs(parkingLot.startTime).format("HH:mm")} -{" "}
@@ -123,14 +152,21 @@ const ParkingDetailsScreen = ({ navigation }: any) => {
 export default ParkingDetailsScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: 20, paddingVertical: 20 },
-  image: { height: 180, width: "100%", resizeMode: "cover", borderRadius: 12 },
+  container: { flex: 1, paddingHorizontal: 16, paddingVertical: 20 },
+  image: {
+    height: 180,
+    width: "100%",
+    resizeMode: "cover",
+    borderRadius: 8,
+    borderColor: "#a1a1a1",
+    borderWidth: 1,
+  },
   flexRow: { display: "flex", flexDirection: "row", alignItems: "center" },
   title: {
     fontSize: 18,
     fontWeight: "700",
     color: Colors.light.primary,
-    marginTop: 12,
+    marginTop: 20,
     marginBottom: 4,
   },
   hour: {

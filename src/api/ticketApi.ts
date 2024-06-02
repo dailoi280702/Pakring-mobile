@@ -27,6 +27,22 @@ const ticketApi = {
     );
     return res.data;
   },
+  reviewTicket: async (
+    idTicket: any,
+    isGoodReview: boolean,
+    comment: string,
+  ) => {
+    const body: { isGoodReview: boolean; comment?: string } = {
+      isGoodReview,
+    };
+
+    if (comment.trim() != "") {
+      body.comment = comment.trim();
+    }
+
+    const res = await axiosClient.post(`/ticket/${idTicket}/review`, body);
+    return res.data;
+  },
 };
 
 export default ticketApi;

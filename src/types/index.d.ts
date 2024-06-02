@@ -80,6 +80,8 @@ type Ticket = {
   total: string;
   state: string;
   isExtend: boolean;
+  isGoodReview?: boolean;
+  comment?: boolean;
   ticketExtend: Ticket[];
 };
 type Favorite = {
@@ -92,4 +94,13 @@ type Favorite = {
 type Location = {
   latitude: number;
   longitude: number;
+};
+
+type ParkingLotInfo = {
+  id: string;
+  totalSlots: number;
+  bookedSlots: number;
+  totalBookedSlots: number;
+  goodReviews: number;
+  badReviews: number;
 };

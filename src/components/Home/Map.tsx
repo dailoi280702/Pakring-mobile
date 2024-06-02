@@ -11,9 +11,12 @@ import config from "@src/config";
 type Props = {
   onSelectedMarker: (p: ParkingLot) => void;
   setDistance: (d: number) => void;
+  menuOption: number;
+  isMenuOpen: boolean;
+  setIsMenuOpen: (_: boolean) => void;
 };
 
-const Map = (props: Props) => {
+const GgMap = (props: Props) => {
   const [region, setRegion] = useState({
     latitude: 10.879424639901684,
     longitude: 106.63844840942431,
@@ -26,7 +29,46 @@ const Map = (props: Props) => {
   });
   const [locations, setLocations] = useState([]);
   const [parkings, setParkings] = useState<ParkingLot[]>([]);
+  const [filteredParkingLots, SetFilteredParkingLots] = useState<ParkingLot[]>(
+    [],
+  );
   const [destination, setDestination] = useState();
+  const [mapInfo, setMapInfo] = useState<Map<string, ParkingLotInfo>>(
+    {} as Map<string, ParkingLotInfo>,
+  );
+
+  useEffect(() => {
+    try {
+      parkingLotApi
+        .getListInfo(parkings.map((p) => p.id))
+        .then((res) => {
+          const data = res.data.data as ParkingLotInfo[];
+          var tmp = new Map();
+
+          data.forEach((v) => tmp.set(v.id, v));
+          setMapInfo(tmp);
+        })
+        .catch((e) => console.log(e));
+    } catch (e) {
+      console.log(e);
+    }
+  }, [parkings]);
+
+  useEffect(() => {
+    if (parkings.length == 0 || !mapInfo) return;
+
+    if (props.menuOption == 2) {
+      const tmp = parkings.filter((v) => {
+        const info = mapInfo.get(v.id);
+
+        return info && info.totalSlots > info.bookedSlots;
+      });
+      SetFilteredParkingLots(tmp);
+      return;
+    }
+
+    SetFilteredParkingLots(parkings);
+  }, [parkings, mapInfo, props.menuOption]);
 
   const handleSelectedSearchItem = (location: ParkingLot) => {
     const tmp = {
@@ -49,6 +91,8 @@ const Map = (props: Props) => {
         latitude: location.lat,
       });
     }
+
+    props.onSelectedMarker(location);
   };
 
   useEffect(() => {
@@ -75,6 +119,17 @@ const Map = (props: Props) => {
   }, []);
 
   useEffect(() => {
+    const tmp = filteredParkingLots.map((element: any) => {
+      return {
+        ...element,
+        longitude: Number(element.long),
+        latitude: Number(element.lat),
+      };
+    });
+    setLocations(tmp);
+  }, [filteredParkingLots]);
+
+  useEffect(() => {
     (async () => {
       if (currentLocation.latitude != 0) {
         const result = await parkingLotApi.getAll({
@@ -85,14 +140,14 @@ const Map = (props: Props) => {
         });
         if (result.data.data.length > 0) {
           setParkings(result.data.data);
-          const tmp = result.data.data.map((element: any) => {
-            return {
-              ...element,
-              longitude: Number(element.long),
-              latitude: Number(element.lat),
-            };
-          });
-          setLocations(tmp);
+          // const tmp = result.data.data.map((element: any) => {
+          //   return {
+          //     ...element,
+          //     longitude: Number(element.long),
+          //     latitude: Number(element.lat),
+          //   };
+          // });
+          // setLocations(tmp);
         }
       }
     })();
@@ -103,6 +158,8 @@ const Map = (props: Props) => {
       <SearchAutocomplete
         onSelected={handleSelectedSearchItem}
         currentLocation={currentLocation}
+        isMenuOpen={props.isMenuOpen}
+        setIsMenuOpen={props.setIsMenuOpen}
       />
       <MapView
         style={styles.map}
@@ -118,9 +175,11 @@ const Map = (props: Props) => {
                 coordinate={{ latitude: e.latitude, longitude: e.longitude }}
                 key={`marker${index}`}
                 onPress={() => {
-                  props.onSelectedMarker(parkings[index]);
-                  setRegion({ ...region, ...e });
-                  setDestination(e);
+                  if (parkings[index]) {
+                    props.onSelectedMarker(parkings[index]);
+                    setRegion({ ...region, ...e });
+                    setDestination(e);
+                  }
                 }}
               />
             );
@@ -144,7 +203,7 @@ const Map = (props: Props) => {
   );
 };
 
-export default Map;
+export default GgMap;
 
 const styles = StyleSheet.create({
   map: {

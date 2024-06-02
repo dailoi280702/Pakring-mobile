@@ -21,6 +21,11 @@ const parkingLotApi = {
   getOne: async (idParkingLot: string) => {
     return await axiosClient.get(`/parking-lot/get-one/${idParkingLot}`);
   },
+  getListInfo: async (parkingLotIds: string[]) => {
+    return await axiosClient.get(
+      `/parking-lot/info?parking_lot_ids=${parkingLotIds.join(",")}`,
+    );
+  },
 };
 
 export default parkingLotApi;

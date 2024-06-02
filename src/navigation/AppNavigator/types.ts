@@ -16,7 +16,7 @@ interface IVerificationParams {
 }
 
 export type AppStackParams = {
-  Home: {};
+  Home: undefined;
   SignIn: undefined;
   SignUp: ISignUpParams;
   ResetPassword: IResetPasswordParams;
