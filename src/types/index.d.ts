@@ -100,6 +100,7 @@ type ParkingLotInfo = {
   id: string;
   totalSlots: number;
   bookedSlots: number;
+  totalBookedSlots: number;
   goodReviews: number;
   badReviews: number;
 };
