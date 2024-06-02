@@ -67,6 +67,26 @@ const ExtendTicketScreen = (props: Props) => {
     })();
   }, []);
 
+  const handleExtend = async () => {
+    const ticketExtendReq = {
+      ticketOriginId: routeData.ticketWithExtend.id,
+      timeFrameId: timeFrameSelected.id,
+      startTime: dayjs(ticket.endTime).utc().format(),
+      endTime: dayjs(ticket.endTime)
+        .add(timeFrameSelected.duration, "minute")
+        .utc()
+        .format(),
+      total: timeFrameSelected.cost,
+    };
+    const res = await ticketApi.extendTicket(ticketExtendReq);
+    if (res.data) {
+      Alert.alert("Successfully!");
+    } else {
+      Alert.alert("Failed!");
+    }
+    props.navigation.goBack();
+  };
+
   return (
     <View style={{ flex: 1, paddingHorizontal: 20 }}>
       <ScrollView
@@ -92,7 +112,7 @@ const ExtendTicketScreen = (props: Props) => {
           {CurrencyHelper.formatVND(timeFrameSelected?.cost) || "0₫"}
         </Text>
       </ScrollView>
-      <AppButton style={styles.continueButton}>
+      <AppButton style={styles.continueButton} onPress={handleExtend}>
         <Text style={styles.countinueText}>Extend</Text>
       </AppButton>
     </View>
