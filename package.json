@@ -38,6 +38,7 @@
     "react": "18.2.0",
     "react-native": "0.74.1",
     "react-native-dashed-line": "^1.1.0",
+    "react-native-element-dropdown": "^2.12.0",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-heroicons": "^4.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",

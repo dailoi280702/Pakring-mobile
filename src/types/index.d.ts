@@ -93,3 +93,9 @@ type Location = {
   latitude: number;
   longitude: number;
 };
+
+type ParkingLotInfo = {
+  id: string;
+  totalSlots: number;
+  bookedSlots: number;
+};
