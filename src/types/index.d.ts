@@ -80,6 +80,8 @@ type Ticket = {
   total: string;
   state: string;
   isExtend: boolean;
+  isGoodReview?: boolean;
+  comment?: boolean;
   ticketExtend: Ticket[];
 };
 type Favorite = {
@@ -98,4 +100,6 @@ type ParkingLotInfo = {
   id: string;
   totalSlots: number;
   bookedSlots: number;
+  goodReviews: number;
+  badReviews: number;
 };

@@ -1,6 +1,9 @@
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import bottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet";
 import { Spinner } from "@nghinv/react-native-loading";
 import { ticketApi } from "@src/api";
 import AppQRCode from "@src/components/Booking/QRCode";
+import SelectableReviewItem from "@src/components/Booking/SelectableReviewItem";
 import AppButton from "@src/components/common/AppButton";
 import { Colors } from "@src/constants";
 import { useAppDispatch, useAppSelector } from "@src/store/hooks";
@@ -17,6 +20,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -56,6 +60,29 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
   const [ticketWithExtend, setTicketWithExtend] = useState<Ticket>(
     route.params,
   );
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [review, setReview] = useState("");
+  const [isGoodReview, setIsGoodReview] = useState(true);
+
+  useEffect(() => {
+    if (isOpen === true) {
+      bottomSheetRef?.current?.snapToIndex(0);
+    } else {
+      bottomSheetRef?.current?.close();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (
+      ticketWithExtend.state == COMPLETED_STATE &&
+      ticketWithExtend.isGoodReview == null
+    ) {
+      if (!bottomSheetRef || !bottomSheetRef.current) return;
+      setIsOpen(true);
+    }
+  }, [ticketWithExtend]);
+
   var time = `${dayjs(route.params.startTime).format("HH:mm")} - ${dayjs(
     route.params.endTime,
   ).format("HH:mm")}`;
@@ -65,6 +92,7 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
       route.params.exitTime,
     ).format("HH:mm")}`;
   }
+
   const onRefresh = async () => {
     Spinner.show();
     setRefreshing(true);
@@ -77,6 +105,7 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
     Spinner.hide();
     setRefreshing(false);
   };
+
   useEffect(() => {
     (async () => {
       Spinner.show();
@@ -111,6 +140,11 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
     ]);
   };
 
+  const reviewItem = [
+    { value: true, label: "Good", accentColor: Colors.light.success },
+    { value: false, label: "Not good", accentColor: Colors.light.warning },
+  ];
+
   const captureAndShare = async () => {
     try {
       const uri = await ref.current.capture();
@@ -133,6 +167,19 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
 
   const handleExtendTicket = () => {
     navigation.navigate("ExtendTicketScreen", { ticketWithExtend });
+  };
+
+  const handleReviewTicket = async () => {
+    Spinner.show();
+    try {
+      await ticketApi.reviewTicket(ticketWithExtend.id, isGoodReview, review);
+      setIsOpen(false);
+      Alert.alert("Thanks for your review!");
+      onRefresh();
+    } catch (e) {
+      Alert.alert("We can not receive your review at this moment!");
+    }
+    Spinner.hide();
   };
 
   return (
@@ -296,6 +343,73 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
           <Text style={styles.countinueText}>Extend ticket</Text>
         </AppButton>
       )}
+
+      {
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={-1}
+          enablePanDownToClose={true}
+          snapPoints={[280, "52%", "95%"]}
+          style={{
+            borderColor: "rgba(0, 0, 0, 0.1)",
+            borderWidth: 1,
+            borderRadius: 16,
+          }}
+        >
+          <BottomSheetView>
+            <View
+              style={{
+                paddingHorizontal: 20,
+                height: "100%",
+                backgroundColor: "white",
+                display: "flex",
+                gap: 12,
+              }}
+            >
+              <Text
+                style={{ fontSize: 14, fontWeight: "500", marginBottom: 8 }}
+              >
+                How was your experience
+              </Text>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: 24,
+                  justifyContent: "center",
+                }}
+              >
+                {reviewItem.map(({ value, label, accentColor }) => (
+                  <SelectableReviewItem
+                    accentColor={accentColor}
+                    text={label}
+                    checked={isGoodReview == value}
+                    handleSelect={() => {
+                      setIsGoodReview(value);
+                    }}
+                  />
+                ))}
+              </View>
+              <TextInput
+                multiline
+                numberOfLines={4}
+                placeholder="Your review"
+                placeholderTextColor="#CBD5E1"
+                value={review}
+                onChangeText={setReview}
+                style={styles.reviewInput}
+              />
+              <AppButton onPress={handleReviewTicket}>
+                <Text
+                  style={{ color: "white", fontSize: 14, fontWeight: "500" }}
+                >
+                  Submit
+                </Text>
+              </AppButton>
+            </View>
+          </BottomSheetView>
+        </BottomSheet>
+      }
     </SafeAreaView>
   );
 };
@@ -373,4 +487,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background,
   },
   delete: { paddingRight: 10 },
+  reviewInput: {
+    borderWidth: 1,
+    borderRadius: 12,
+    borderColor: "#90A3BC",
+    padding: 12,
+    color: Colors.light.text,
+    textAlignVertical: "top",
+  },
 });
