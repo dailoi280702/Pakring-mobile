@@ -101,13 +101,12 @@ const SearchAutocomplete = (props: Props) => {
                 color="black"
               />
             )}
-            <AntDesign
-              name="filter"
-              style={{ marginLeft: 12 }}
-              size={20}
-              color="black"
+            <TouchableOpacity
+              style={styles.filterButton}
               onPress={() => props.setIsMenuOpen(!props.isMenuOpen)}
-            />
+            >
+              <AntDesign name="filter" size={20} color="black" />
+            </TouchableOpacity>
           </View>
         </View>
         <FlatList
@@ -222,5 +221,12 @@ const styles = StyleSheet.create({
   image: {
     borderRadius: 11,
     marginRight: 10,
+  },
+  filterButton: {
+    width: 36,
+    height: 36,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

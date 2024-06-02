@@ -24,10 +24,17 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
   useEffect(() => {
     if (isOpen === true) {
       ref?.current?.snapToIndex(0);
+      setIsShowDetail(false);
     } else {
       ref?.current?.close();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (isShowDetail) {
+      setIsOpen(false);
+    }
+  }, [isShowDetail]);
 
   const dispatch = useAppDispatch();
 
