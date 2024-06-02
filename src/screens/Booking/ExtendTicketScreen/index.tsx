@@ -1,18 +1,29 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { timeFrameApi } from "@src/api";
-import { AppStackParams } from "@src/navigation/AppNavigator/types";
+import { ticketApi, timeFrameApi } from "@src/api";
+import SelectableTimeItem from "@src/components/Booking/SelectableTimeItem";
+import AppButton from "@src/components/common/AppButton";
+import { Colors } from "@src/constants";
 import { BookingHistoryStackParams } from "@src/navigation/Stack/types";
+import { CurrencyHelper } from "@src/utils";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import {
+  Alert,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
 type Props = NativeStackScreenProps<BookingHistoryStackParams, "ExntendTicket">;
 
 const ExtendTicketScreen = (props: Props) => {
+  const [timeFrameSelected, setTimeFrameSelected] = useState<TimeFrame>(null);
   const [timeFramesValid, setTimeFramesValid] = useState<TimeFrame[]>();
   const routeData = props.route.params;
   const ticket = routeData.ticketWithExtend.isExtend
@@ -20,6 +31,10 @@ const ExtendTicketScreen = (props: Props) => {
         routeData.ticketWithExtend.ticketExtend.length - 1
       ]
     : routeData.ticketWithExtend;
+
+  const onSelectTimeFrame = (tf: TimeFrame) => {
+    setTimeFrameSelected(tf);
+  };
 
   useEffect(() => {
     (async () => {
@@ -52,7 +67,63 @@ const ExtendTicketScreen = (props: Props) => {
     })();
   }, []);
 
-  return <div>{JSON.stringify(timeFramesValid)}</div>;
+  return (
+    <View style={{ flex: 1, paddingHorizontal: 20 }}>
+      <ScrollView
+        style={{ paddingVertical: 10 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.title}>Duration</Text>
+        <FlatList
+          data={timeFramesValid}
+          keyExtractor={(item) => item.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <SelectableTimeItem
+              item={item}
+              selectedId={timeFrameSelected?.id}
+              onSelect={() => onSelectTimeFrame(item)}
+            />
+          )}
+        />
+        <Text style={styles.title}>Total</Text>
+        <Text style={styles.total}>
+          {CurrencyHelper.formatVND(timeFrameSelected?.cost) || "0₫"}
+        </Text>
+      </ScrollView>
+      <AppButton style={styles.continueButton}>
+        <Text style={styles.countinueText}>Extend</Text>
+      </AppButton>
+    </View>
+  );
 };
 
 export default ExtendTicketScreen;
+
+const styles = StyleSheet.create({
+  title: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginVertical: 12,
+    color: Colors.light.heading,
+  },
+  total: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: Colors.light.primary,
+    textAlign: "right",
+  },
+  continueButton: {
+    marginTop: 12,
+    position: "absolute",
+    bottom: 10,
+    right: 20,
+    left: 20,
+  },
+  countinueText: {
+    color: Colors.light.background,
+    fontSize: 18,
+    fontWeight: "600",
+  },
+});
