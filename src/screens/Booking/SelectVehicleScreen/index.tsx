@@ -20,7 +20,9 @@ const SelectVehicleScreen = ({ navigation }: any) => {
     dispatch(bookingActions.update({ field: "vehicle", value: vehicle }));
   };
 
-  const navigateToAdd = () => {};
+  const navigateToAdd = () => {
+    navigation.navigate("AddVehicleScreen");
+  };
 
   const navigateNext = () => {
     if (selectedVehicle) {

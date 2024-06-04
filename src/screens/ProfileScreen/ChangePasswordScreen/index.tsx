@@ -1,7 +1,4 @@
-import {
-  MaterialCommunityIcons,
-  Octicons,
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import authApi from "@src/api/authApi";
 import AppButton from "@src/components/common/AppButton";
@@ -50,7 +47,7 @@ const ChangePasswordScreen = (props: Props) => {
         userState.phoneNumber
       );
       setIsLoading(false);
-      if (isSuccess.data.status) {
+      if (isSuccess.data) {
         const password = await AsyncStorage.getItem("password");
         if (password) {
           await AsyncStorage.setItem("password", values.password);

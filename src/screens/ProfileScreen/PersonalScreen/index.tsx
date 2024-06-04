@@ -76,7 +76,6 @@ const PersonalScreen = (props: Props) => {
   const handleUpdateProfile = (values: ProfileForm) => {
     const user = { ...userState, ...values, imageUrl };
     dispatch(userActions.updateUser(user));
-    setIsLoading(true);
     props.navigation.goBack();
   };
 
