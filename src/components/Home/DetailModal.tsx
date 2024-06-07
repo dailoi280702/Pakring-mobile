@@ -15,6 +15,9 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { Spinner } from "@nghinv/react-native-loading";
 import { Spacing } from "@src/constants";
+import { AsyncThunkAction } from "@reduxjs/toolkit";
+import { AsyncThunkConfig } from "@reduxjs/toolkit/dist/createAsyncThunk";
+import { object } from "yup";
 dayjs.extend(utc);
 
 type Props = {
@@ -40,12 +43,8 @@ const DetailModal = (props: Props) => {
   const ref = React.useRef<BottomSheet>(null);
   const parkingLot = useAppSelector(selectBooking).parkingLot;
   const [numOfAvailableSlots, setNumOfAvailableSlots] = useState(0);
-  const [isFavorite, setFavorite] = useState<boolean>(false);
+  const [favorite, setFavorite] = useState<{ id: string } | boolean>(false);
   const user = useAppSelector(selectUser);
-
-  const onOpenBottomSheetHandler = (index: number) => {
-    ref?.current?.snapToIndex(index);
-  };
 
   useEffect(() => {
     if (isShow === true) {
@@ -55,6 +54,35 @@ const DetailModal = (props: Props) => {
       // onOpenBottomSheetHandler(-1);
     }
   }, [isShow]);
+
+  const onOpenBottomSheetHandler = (index: number) => {
+    ref?.current?.snapToIndex(index);
+  };
+
+  const handleCall = () => {
+    console.log("handle call");
+    // Linking.openURL(`tel:${phoneNumber}`);
+  };
+
+  const onClickFavorite = () => {
+    Spinner.show();
+    if (!favorite) {
+      favoriteApi
+        .create({
+          parkingLotId: parkingLot?.id,
+          userId: user.id,
+        })
+        .then((res) => setFavorite(res.data))
+        .finally(() => Spinner.hide());
+    } else {
+      if (typeof favorite == "object" && "id" in favorite) {
+        favoriteApi
+          .deleteOne(favorite.id)
+          .then(() => setFavorite(null))
+          .finally(() => Spinner.hide());
+      }
+    }
+  };
 
   useEffect(() => {
     const getNumOfSlots = async () => {
@@ -75,19 +103,19 @@ const DetailModal = (props: Props) => {
     };
 
     const getFavorite = async () => {
-      const res = await favoriteApi.getOne(user.id, parkingLot.id);
-      if (res.data.data) {
-        setFavorite(true);
-      } else {
-        setFavorite(false);
-      }
+      return favoriteApi
+        .getOne(user.id, parkingLot.id)
+        .then((res) => {
+          setFavorite(res.data);
+        })
+        .catch(() => setFavorite(false));
     };
 
     Spinner.show();
     if (parkingLot && parkingLot.id) {
-      Promise.all([getNumOfSlots(), getFavorite()])
-        .catch((e) => console.log(e))
-        .finally(() => Spinner.hide());
+      Promise.all([getNumOfSlots(), getFavorite()]).finally(() =>
+        Spinner.hide(),
+      );
     }
   }, [parkingLot]);
 
@@ -164,7 +192,7 @@ const DetailModal = (props: Props) => {
                       }}
                     >
                       <ActionButton
-                        action={() => {}}
+                        action={handleCall}
                         icon={
                           <Ionicons
                             name="call-outline"
@@ -174,9 +202,9 @@ const DetailModal = (props: Props) => {
                         }
                       />
                       <ActionButton
-                        action={() => {}}
+                        action={onClickFavorite}
                         icon={
-                          isFavorite ? (
+                          favorite ? (
                             <Ionicons
                               name="heart"
                               size={24}
@@ -348,3 +376,6 @@ const styles = StyleSheet.create({
 });
 
 export default DetailModal;
+function dispatch(arg0: AsyncThunkAction<any, any, AsyncThunkConfig>) {
+  throw new Error("Function not implemented.");
+}
