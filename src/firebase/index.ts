@@ -1,9 +1,7 @@
 import { getApp, initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 
-const firebaseApp = initializeApp({
-
-});
+const firebaseApp = initializeApp({});
 
 export const storage = getStorage(firebaseApp);
 
