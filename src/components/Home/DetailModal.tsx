@@ -19,7 +19,7 @@ type Props = {
   isShow: boolean;
   onClose: any;
   distance: number;
-  navigateBooking: () => void;
+  navigateBooking: (parkingLotId: string) => void;
 };
 
 const DetailModal = (props: Props) => {
@@ -189,7 +189,7 @@ const DetailModal = (props: Props) => {
                 </View>
                 <TouchableOpacity
                   style={styles.btnBook}
-                  onPress={props.navigateBooking}
+                  onPress={() => props.navigateBooking(parkingLot.id)}
                 >
                   <Text
                     style={{

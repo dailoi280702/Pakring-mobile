@@ -1,6 +1,6 @@
 export type HomeStackParams = {
   HomeScreen: undefined;
-  ParkingDetailsScreen: any;
+  ParkingDetailsScreen: { parkingLotId: string };
   SelectVehicleScreen: any;
   ReserveParkingScreen: any;
   SelectParkingSlotScreen: any;

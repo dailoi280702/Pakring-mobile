@@ -13,8 +13,12 @@ import { useAppDispatch } from "@src/store/hooks";
 import { bookingActions } from "@src/store/slices/bookingSlice";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import SelectableMenuItem from "@src/components/Home/SelectableMenuItem";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { HomeStackParams } from "@src/navigation/Stack/types";
 
-const HomeScreen = ({ navigation }: { navigation: any }) => {
+type Props = NativeStackScreenProps<HomeStackParams, "HomeScreen">;
+
+const HomeScreen = ({ navigation }: Props) => {
   const [isShowDetail, setIsShowDetail] = useState(false);
   const [distance, setDistance] = useState(0);
   const ref = useRef<BottomSheet>(null);
@@ -38,9 +42,9 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
 
   const dispatch = useAppDispatch();
 
-  const navigateBooking = () => {
+  const navigateBooking = (parkingLotId: string) => {
     setIsShowDetail(false);
-    navigation.navigate("ParkingDetailsScreen");
+    navigation.navigate("ParkingDetailsScreen", { parkingLotId: parkingLotId });
   };
 
   const menuItems = [
