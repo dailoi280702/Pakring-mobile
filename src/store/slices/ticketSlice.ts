@@ -72,7 +72,7 @@ export const ticketSlice = createSlice({
         state.newBooking = state.newBooking.filter((t) =>
           state.completedBooking.every((t2) => t2.id != t.id),
         );
-        state.ongoingBooking = state.newBooking.filter((t) =>
+        state.ongoingBooking = state.ongoingBooking.filter((t) =>
           state.completedBooking.every((t2) => t2.id != t.id),
         );
       },
