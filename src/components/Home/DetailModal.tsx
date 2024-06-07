@@ -111,8 +111,8 @@ const DetailModal = (props: Props) => {
         .catch(() => setFavorite(false));
     };
 
-    Spinner.show();
     if (parkingLot && parkingLot.id) {
+      Spinner.show();
       Promise.all([getNumOfSlots(), getFavorite()]).finally(() =>
         Spinner.hide(),
       );
