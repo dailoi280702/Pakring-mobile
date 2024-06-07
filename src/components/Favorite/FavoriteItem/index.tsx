@@ -14,9 +14,14 @@ import { Swipeable } from "react-native-gesture-handler";
 type Props = {
   favorite: ParkingLot;
   onDelete: any;
+  navigateParkingLotDetails: (parkingLotId: string) => void;
 };
 
-const FavoriteItem = ({ favorite, onDelete }: Props) => {
+const FavoriteItem = ({
+  favorite,
+  onDelete,
+  navigateParkingLotDetails,
+}: Props) => {
   const swipeRef = useRef(null);
 
   const closeSwipable = () => {
@@ -24,7 +29,7 @@ const FavoriteItem = ({ favorite, onDelete }: Props) => {
   };
   const renderRightAction = (
     progress: Animated.AnimatedInterpolation<number>,
-    dragX: Animated.AnimatedInterpolation<number>
+    dragX: Animated.AnimatedInterpolation<number>,
   ) => {
     const scale = dragX.interpolate({
       inputRange: [-10, 0],
@@ -44,13 +49,18 @@ const FavoriteItem = ({ favorite, onDelete }: Props) => {
     );
   };
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => navigateParkingLotDetails(favorite.id)}
+    >
       <Swipeable
         ref={swipeRef}
         key={favorite.id}
-        onSwipeableRightOpen={() =>
-          AlertHelper.confirm(onDelete, closeSwipable)
-        }
+        onSwipeableOpen={(direction) => {
+          if (direction == "right") {
+            AlertHelper.confirm(onDelete, closeSwipable);
+          }
+        }}
         renderRightActions={renderRightAction}
       >
         <View style={styles.wrapper}>

@@ -1,13 +1,17 @@
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Images } from "@src/assets";
 import FavoriteItem from "@src/components/Favorite/FavoriteItem";
 import { Colors } from "@src/constants";
+import { ProfileStackParams } from "@src/navigation/Stack/types";
 import { useAppDispatch, useAppSelector } from "@src/store/hooks";
 import { selectFavorites, selectUser } from "@src/store/selectors";
 import { favoriteActions } from "@src/store/slices/favoriteSlice";
 import { useEffect } from "react";
 import { Alert, FlatList, Image, StyleSheet, Text, View } from "react-native";
 
-const FavoriteScreen = () => {
+type Props = NativeStackScreenProps<ProfileStackParams, "ParkingDetailsScreen">;
+
+const FavoriteScreen = ({ navigation }: Props) => {
   const favoriteState = useAppSelector(selectFavorites);
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
@@ -46,6 +50,11 @@ const FavoriteScreen = () => {
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
             <FavoriteItem
+              navigateParkingLotDetails={(parkingLotId) =>
+                navigation.navigate("ParkingDetailsScreen", {
+                  parkingLotId: parkingLotId,
+                })
+              }
               favorite={item?.parkingLot}
               onDelete={() => handleDelete(item.id)}
             />
