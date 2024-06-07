@@ -1,9 +1,8 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Images } from "@src/assets";
 import FavoriteItem from "@src/components/Favorite/FavoriteItem";
 import { Colors } from "@src/constants";
 import { useAppDispatch, useAppSelector } from "@src/store/hooks";
-import { selectFavorites } from "@src/store/selectors";
+import { selectFavorites, selectUser } from "@src/store/selectors";
 import { favoriteActions } from "@src/store/slices/favoriteSlice";
 import { useEffect } from "react";
 import { Alert, FlatList, Image, StyleSheet, Text, View } from "react-native";
@@ -11,17 +10,20 @@ import { Alert, FlatList, Image, StyleSheet, Text, View } from "react-native";
 const FavoriteScreen = () => {
   const favoriteState = useAppSelector(selectFavorites);
   const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
 
-  const handleDelete = (idParkingLot: string) => {
-    dispatch(favoriteActions.deleteFavorite(idParkingLot))
-      .then(() => Alert.alert("Deleted successfully!"))
+  const handleDelete = (favoritId: string) => {
+    dispatch(favoriteActions.deleteFavorite(favoritId))
+      .then(() => {
+        Alert.alert("Deleted successfully!");
+        dispatch(favoriteActions.getFavorites(user.id));
+      })
       .catch(() => Alert.alert("Error!"));
   };
 
   useEffect(() => {
     const getFavoriteLots = async () => {
-      const idUser = await AsyncStorage.getItem("idUser");
-      dispatch(favoriteActions.getFavorites(idUser));
+      dispatch(favoriteActions.getFavorites(user.id));
     };
 
     getFavoriteLots();
@@ -45,7 +47,7 @@ const FavoriteScreen = () => {
           renderItem={({ item }) => (
             <FavoriteItem
               favorite={item?.parkingLot}
-              onDelete={() => handleDelete(item.parkingLotId)}
+              onDelete={() => handleDelete(item.id)}
             />
           )}
         />

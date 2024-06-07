@@ -7,7 +7,7 @@ import {
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { favoriteApi, parkingSlotApi } from "@src/api";
 import { Colors } from "@src/constants";
-import { useAppSelector } from "@src/store/hooks";
+import { useAppDispatch, useAppSelector } from "@src/store/hooks";
 import { selectBooking, selectUser } from "@src/store/selectors";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -15,9 +15,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { Spinner } from "@nghinv/react-native-loading";
 import { Spacing } from "@src/constants";
-import { AsyncThunkAction } from "@reduxjs/toolkit";
-import { AsyncThunkConfig } from "@reduxjs/toolkit/dist/createAsyncThunk";
-import { object } from "yup";
+import { favoriteActions } from "@src/store/slices/favoriteSlice";
 dayjs.extend(utc);
 
 type Props = {
@@ -45,6 +43,7 @@ const DetailModal = (props: Props) => {
   const [numOfAvailableSlots, setNumOfAvailableSlots] = useState(0);
   const [favorite, setFavorite] = useState<{ id: string } | boolean>(false);
   const user = useAppSelector(selectUser);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (isShow === true) {
@@ -82,6 +81,7 @@ const DetailModal = (props: Props) => {
           .finally(() => Spinner.hide());
       }
     }
+    dispatch(favoriteActions.getFavorites(user.id));
   };
 
   useEffect(() => {
@@ -376,6 +376,3 @@ const styles = StyleSheet.create({
 });
 
 export default DetailModal;
-function dispatch(arg0: AsyncThunkAction<any, any, AsyncThunkConfig>) {
-  throw new Error("Function not implemented.");
-}
