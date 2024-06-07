@@ -38,6 +38,8 @@ const GgMap = (props: Props) => {
   );
 
   useEffect(() => {
+    if (parkings.length == 0) return;
+
     try {
       parkingLotApi
         .getListInfo(parkings.map((p) => p.id))

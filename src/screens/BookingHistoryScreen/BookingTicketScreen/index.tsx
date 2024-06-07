@@ -1,5 +1,4 @@
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import bottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet";
 import { Spinner } from "@nghinv/react-native-loading";
 import { ticketApi } from "@src/api";
 import AppQRCode from "@src/components/Booking/QRCode";
@@ -167,6 +166,12 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
 
   const handleExtendTicket = () => {
     navigation.navigate("ExtendTicketScreen", { ticketWithExtend });
+  };
+
+  const handleReBook = () => {
+    navigation.navigate("ParkingDetailsScreen", {
+      parkingLotId: ticketWithExtend.parkingLot.id,
+    });
   };
 
   const handleReviewTicket = async () => {
@@ -338,9 +343,13 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
             })}
         </View>
       </ScrollView>
-      {ticketWithExtend.state == ONGOING_STATE && (
+      {ticketWithExtend.state == ONGOING_STATE ? (
         <AppButton style={styles.continueButton} onPress={handleExtendTicket}>
           <Text style={styles.countinueText}>Extend ticket</Text>
+        </AppButton>
+      ) : (
+        <AppButton style={styles.continueButton} onPress={handleReBook}>
+          <Text style={styles.countinueText}>Book again</Text>
         </AppButton>
       )}
 

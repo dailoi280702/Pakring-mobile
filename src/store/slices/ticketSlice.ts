@@ -59,6 +59,9 @@ export const ticketSlice = createSlice({
       (state, { payload }: PayloadAction<Ticket[]>) => {
         state.ongoingBooking = payload;
         Spinner.hide();
+        state.newBooking = state.newBooking.filter((t) =>
+          state.ongoingBooking.every((t2) => t2.id != t.id),
+        );
       },
     );
     builder.addCase(
@@ -66,6 +69,12 @@ export const ticketSlice = createSlice({
       (state, { payload }: PayloadAction<Ticket[]>) => {
         state.completedBooking = payload;
         Spinner.hide();
+        state.newBooking = state.newBooking.filter((t) =>
+          state.completedBooking.every((t2) => t2.id != t.id),
+        );
+        state.ongoingBooking = state.ongoingBooking.filter((t) =>
+          state.completedBooking.every((t2) => t2.id != t.id),
+        );
       },
     );
     builder.addCase(
