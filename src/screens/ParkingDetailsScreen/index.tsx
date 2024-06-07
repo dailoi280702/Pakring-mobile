@@ -3,11 +3,12 @@ import TimeItem from "@src/components/Home/TimeItem";
 import AppButton from "@src/components/common/AppButton";
 import { Colors, Spacing } from "@src/constants";
 import { useAppDispatch, useAppSelector } from "@src/store/hooks";
-import { selectBooking, selectTimeFrames } from "@src/store/selectors";
+import { selectTimeFrames } from "@src/store/selectors";
 import { timeFrameActions } from "@src/store/slices/timeFrameSlice";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import {
+  Alert,
   FlatList,
   Image,
   ScrollView,
@@ -18,13 +19,20 @@ import {
 import ReadMore from "@src/components/common/ReadMore";
 import { Spinner } from "@nghinv/react-native-loading";
 import { parkingLotApi, parkingSlotApi } from "@src/api";
+import { HomeStackParams } from "@src/navigation/Stack/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { bookingActions } from "@src/store/slices/bookingSlice";
 
-const ParkingDetailsScreen = ({ navigation }: any) => {
-  const parkingLot: ParkingLot = useAppSelector(selectBooking).parkingLot;
+type Props = NativeStackScreenProps<HomeStackParams, "ParkingDetailsScreen">;
+
+const ParkingDetailsScreen = ({ navigation, route }: Props) => {
+  const parkingLotId = route.params.parkingLotId;
+  const [parkingLot, setParkingLot] = useState<ParkingLot>();
   const timeFrames = useAppSelector(selectTimeFrames);
   const dispatch = useAppDispatch();
   const [numOfAvailableSlots, setNumOfAvailableSlots] = useState(0);
   const [parkingLotInfo, setParkingLotInfo] = useState<ParkingLotInfo>();
+  const [loaded, setLoaded] = useState(false);
 
   const navigateNext = () => {
     if (numOfAvailableSlots > 0) {
@@ -34,45 +42,66 @@ const ParkingDetailsScreen = ({ navigation }: any) => {
 
   useEffect(() => {
     const getNumOfSlots = async () => {
-      try {
-        Spinner.show();
-        const startTime = dayjs();
-        const endTime = startTime.add(1, "hour");
-        const slotAvailable = await parkingSlotApi.getAvailableSlots(
-          startTime.utc().format(),
-          endTime.utc().format(),
-          parkingLot?.id,
-        );
-        let num = 0;
-        if (slotAvailable.data.data) {
-          slotAvailable.data.data.forEach((e: any) => {
-            num += e.parkingSlots.length;
-          });
-        }
-        setNumOfAvailableSlots(num);
-      } finally {
-        Spinner.hide();
+      const startTime = dayjs();
+      const endTime = startTime.add(1, "hour");
+      const slotAvailable = await parkingSlotApi.getAvailableSlots(
+        startTime.utc().format(),
+        endTime.utc().format(),
+        parkingLotId,
+      );
+      let num = 0;
+      if (slotAvailable.data.data) {
+        slotAvailable.data.data.forEach((e: any) => {
+          num += e.parkingSlots.length;
+        });
       }
+      setNumOfAvailableSlots(num);
     };
 
     const getParkingLotInfo = async () => {
-      try {
-        Spinner.show();
-        const res = await parkingLotApi.getListInfo([parkingLot.id]);
-        if (res.data.data && res.data.data.length && res.data.data.length > 0) {
-          setParkingLotInfo(res.data.data[0]);
-        }
-      } finally {
-        Spinner.hide();
+      const res = await parkingLotApi.getListInfo([parkingLotId]);
+      if (res.data.data && res.data.data.length && res.data.data.length > 0) {
+        setParkingLotInfo(res.data.data[0]);
       }
     };
 
-    if (parkingLot && parkingLot.id) {
-      dispatch(timeFrameActions.getTimeFrames(parkingLot?.id));
-      getNumOfSlots();
-      getParkingLotInfo();
+    const getParkingLotDetail = async () => {
+      const res = await parkingLotApi.getOne(parkingLotId);
+      if (res.data.data) {
+        setParkingLot(res.data.data as ParkingLot);
+      }
+    };
+
+    Spinner.show();
+    Promise.all([
+      getNumOfSlots(),
+      getParkingLotInfo(),
+      getParkingLotDetail(),
+      dispatch(timeFrameActions.getTimeFrames(parkingLotId)),
+    ])
+      .then(() => setLoaded(true))
+      .catch((e) => {
+        console.log(e);
+        navigation.canGoBack() && navigation.goBack();
+        Alert.alert("Can not get parking lot details at this moment");
+      })
+      .finally(() => Spinner.hide());
+  }, [parkingLotId]);
+
+  useEffect(() => {
+    if (loaded && parkingLot) {
+      dispatch(
+        bookingActions.update({
+          field: "parkingLot",
+          value: parkingLot,
+        }),
+      );
     }
-  }, [parkingLot]);
+  }, [loaded, parkingLot]);
+
+  if (!loaded || !parkingLot) {
+    return null;
+  }
 
   return (
     <View style={{ flex: 1 }}>
