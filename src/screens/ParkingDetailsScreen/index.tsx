@@ -41,6 +41,8 @@ const ParkingDetailsScreen = ({ navigation, route }: Props) => {
   };
 
   useEffect(() => {
+    if (!parkingLotId) return;
+
     const getNumOfSlots = async () => {
       const startTime = dayjs();
       const endTime = startTime.add(1, "hour");
