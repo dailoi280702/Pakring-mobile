@@ -1,18 +1,20 @@
 import {
   Feather,
+  Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { parkingSlotApi } from "@src/api";
+import { favoriteApi, parkingSlotApi } from "@src/api";
 import { Colors } from "@src/constants";
 import { useAppSelector } from "@src/store/hooks";
-import { selectBooking } from "@src/store/selectors";
+import { selectBooking, selectUser } from "@src/store/selectors";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { Spinner } from "@nghinv/react-native-loading";
+import { Spacing } from "@src/constants";
 dayjs.extend(utc);
 
 type Props = {
@@ -22,11 +24,24 @@ type Props = {
   navigateBooking: (parkingLotId: string) => void;
 };
 
+const ActionButton = ({ action, icon }: { action: () => any; icon: any }) => {
+  return (
+    <TouchableOpacity
+      onPress={action}
+      style={[styles.flexCenter, styles.actionButton]}
+    >
+      {icon}
+    </TouchableOpacity>
+  );
+};
+
 const DetailModal = (props: Props) => {
   const { isShow, onClose } = props;
   const ref = React.useRef<BottomSheet>(null);
   const parkingLot = useAppSelector(selectBooking).parkingLot;
   const [numOfAvailableSlots, setNumOfAvailableSlots] = useState(0);
+  const [isFavorite, setFavorite] = useState<boolean>(false);
+  const user = useAppSelector(selectUser);
 
   const onOpenBottomSheetHandler = (index: number) => {
     ref?.current?.snapToIndex(index);
@@ -43,30 +58,36 @@ const DetailModal = (props: Props) => {
 
   useEffect(() => {
     const getNumOfSlots = async () => {
-      try {
-        Spinner.show();
-        const startTime = dayjs();
-        const endTime = startTime.add(1, "hour");
-        const slotAvailable = await parkingSlotApi.getAvailableSlots(
-          startTime.utc().format(),
-          endTime.utc().format(),
-          parkingLot?.id,
-        );
-        let num = 0;
-        if (slotAvailable.data.data) {
-          slotAvailable.data.data.forEach((e: any) => {
-            num += e.parkingSlots.length;
-          });
-        }
-        setNumOfAvailableSlots(num);
-        console.log(num);
-      } finally {
-        Spinner.hide();
+      const startTime = dayjs();
+      const endTime = startTime.add(1, "hour");
+      const slotAvailable = await parkingSlotApi.getAvailableSlots(
+        startTime.utc().format(),
+        endTime.utc().format(),
+        parkingLot?.id,
+      );
+      let num = 0;
+      if (slotAvailable.data.data) {
+        slotAvailable.data.data.forEach((e: any) => {
+          num += e.parkingSlots.length;
+        });
+      }
+      setNumOfAvailableSlots(num);
+    };
+
+    const getFavorite = async () => {
+      const res = await favoriteApi.getOne(user.id, parkingLot.id);
+      if (res.data.data) {
+        setFavorite(true);
+      } else {
+        setFavorite(false);
       }
     };
 
+    Spinner.show();
     if (parkingLot && parkingLot.id) {
-      getNumOfSlots();
+      Promise.all([getNumOfSlots(), getFavorite()])
+        .catch((e) => console.log(e))
+        .finally(() => Spinner.hide());
     }
   }, [parkingLot]);
 
@@ -95,27 +116,83 @@ const DetailModal = (props: Props) => {
             {parkingLot ? (
               <>
                 <View>
-                  <Text
+                  <View
                     style={{
-                      fontSize: 18,
-                      fontWeight: "700",
-                      color: Colors.light.primary,
-                      lineHeight: 24,
-                    }}
-                    numberOfLines={2}
-                  >
-                    {parkingLot?.name}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      lineHeight: 20,
-                      color: Colors.light.subtitle,
-                      textAlign: "justify",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      flexDirection: "row",
+                      alignItems: "flex-start",
+                      gap: 12,
+                      flexShrink: 0,
                     }}
                   >
-                    Description: {parkingLot?.description}
-                  </Text>
+                    <View
+                      style={{
+                        flexShrink: 1,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          fontWeight: "700",
+                          color: Colors.light.primary,
+                          lineHeight: 24,
+                        }}
+                        numberOfLines={2}
+                      >
+                        {parkingLot?.name}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          lineHeight: 20,
+                          color: Colors.light.subtitle,
+                        }}
+                        ellipsizeMode="tail"
+                        numberOfLines={2}
+                      >
+                        {parkingLot.description &&
+                          `Description: ${parkingLot?.description}`}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 12,
+                        flexDirection: "row",
+                      }}
+                    >
+                      <ActionButton
+                        action={() => {}}
+                        icon={
+                          <Ionicons
+                            name="call-outline"
+                            size={24}
+                            color={Colors.light.primary}
+                          />
+                        }
+                      />
+                      <ActionButton
+                        action={() => {}}
+                        icon={
+                          isFavorite ? (
+                            <Ionicons
+                              name="heart"
+                              size={24}
+                              color={Colors.light.primary}
+                            />
+                          ) : (
+                            <Ionicons
+                              name="heart-outline"
+                              size={24}
+                              color={Colors.light.primary}
+                            />
+                          )
+                        }
+                      />
+                    </View>
+                  </View>
                   <View style={{ ...styles.flexRow, marginVertical: 12 }}>
                     <Feather
                       name="map-pin"
@@ -251,6 +328,23 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   flexRow: { display: "flex", flexDirection: "row", alignItems: "center" },
+  actionButton: {
+    height: 40,
+    width: 40,
+    backgroundColor: "#DBE0FB",
+    borderRadius: 8,
+  },
+  flexCenter: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#4D65EB",
+    marginLeft: Spacing.s,
+  },
 });
 
 export default DetailModal;
