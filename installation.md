@@ -1,7 +1,3 @@
-# Pakring-mobile
-
-User client for Parking project
-
 # Setup Instruction
 
 Guide for Setting Up a Local Parking Project Development and Testing Environment
