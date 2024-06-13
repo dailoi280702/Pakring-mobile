@@ -1,8 +1,25 @@
-import { API_BASE_URL, MAP_API_KEY } from "@env";
+import {
+  API_BASE_URL,
+  MAP_API_KEY,
+  FB_API_KEY,
+  FB_AUTH_DOMAIN,
+  FB_PROJECT_ID,
+  FB_STORAGE_BUCKET,
+  FB_MESSAGING_SENDER_ID,
+  FB_APP_ID,
+} from "@env";
 
 const config = {
   API_BASE_URL,
   MAP_API_KEY,
+  firebase: {
+    apiKey: FB_API_KEY,
+    authDomain: FB_AUTH_DOMAIN,
+    projectId: FB_PROJECT_ID,
+    storageBucket: FB_STORAGE_BUCKET,
+    messagingSenderId: FB_MESSAGING_SENDER_ID,
+    appId: FB_APP_ID,
+  },
 };
 
 export default config;
