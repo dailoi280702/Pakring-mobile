@@ -9,7 +9,11 @@ import { useAppDispatch, useAppSelector } from "@src/store/hooks";
 import { selectUser } from "@src/store/selectors";
 import { ticketActions } from "@src/store/slices/ticketSlice";
 import { DateTimeHelper } from "@src/utils";
-import { COMPLETED_STATE, ONGOING_STATE } from "@src/utils/constant";
+import {
+  CANCEL_STATE,
+  COMPLETED_STATE,
+  ONGOING_STATE,
+} from "@src/utils/constant";
 import dayjs from "dayjs";
 import * as Sharing from "expo-sharing";
 import React, { useEffect, useRef, useState } from "react";
@@ -343,15 +347,19 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
             })}
         </View>
       </ScrollView>
-      {ticketWithExtend.state == ONGOING_STATE ? (
+
+      {ticketWithExtend.state == ONGOING_STATE && (
         <AppButton style={styles.continueButton} onPress={handleExtendTicket}>
           <Text style={styles.countinueText}>Extend ticket</Text>
         </AppButton>
-      ) : (
-        <AppButton style={styles.continueButton} onPress={handleReBook}>
-          <Text style={styles.countinueText}>Book again</Text>
-        </AppButton>
       )}
+
+      {ticketWithExtend.state == CANCEL_STATE ||
+        (ticketWithExtend.state == COMPLETED_STATE && (
+          <AppButton style={styles.continueButton} onPress={handleReBook}>
+            <Text style={styles.countinueText}>Book again</Text>
+          </AppButton>
+        ))}
 
       {
         <BottomSheet

@@ -10,13 +10,20 @@ import { Colors } from "@src/constants";
 import { useAppDispatch, useAppSelector } from "@src/store/hooks";
 import { selectBooking, selectUser } from "@src/store/selectors";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Linking,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { Spinner } from "@nghinv/react-native-loading";
 import { Spacing } from "@src/constants";
 import { favoriteActions } from "@src/store/slices/favoriteSlice";
 dayjs.extend(utc);
+import Config from "@src/config";
 
 type Props = {
   isShow: boolean;
@@ -60,7 +67,15 @@ const DetailModal = (props: Props) => {
 
   const handleCall = () => {
     console.log("handle call");
-    // Linking.openURL(`tel:${phoneNumber}`);
+    console.log(parkingLot);
+    const baseUrl =
+      Config.API_BASE_URL.substring(0, Config.API_BASE_URL.indexOf("/api/v1")) +
+      "/api/merchant/company/get-one/" +
+      parkingLot.companyID;
+    fetch(baseUrl)
+      .then((res) => res.json())
+      .then((data) => Linking.openURL(`tel:${data.data.phoneNumber}`))
+      .catch((e) => console.log(e));
   };
 
   const onClickFavorite = () => {
