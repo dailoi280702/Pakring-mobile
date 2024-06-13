@@ -19,12 +19,14 @@ import * as Sharing from "expo-sharing";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
+  Linking,
   RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableOpacityBase,
   View,
 } from "react-native";
 import {
@@ -191,14 +193,21 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
     Spinner.hide();
   };
 
+  const handleOpenMap = () => {
+    const latLng = `${ticketWithExtend.parkingLot.lat},${ticketWithExtend.parkingLot.long}`;
+    const mapUrl = `google.navigation:q=${latLng}`;
+    Linking.openURL(mapUrl);
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.header}>
         <View style={{ flex: 1 }}>
           <Text style={styles.headerText}>Parking ticket</Text>
         </View>
-        {ticketWithExtend.state != "cancel" &&
-          ticketWithExtend.state != "completed" && (
+        {ticketWithExtend.state != CANCEL_STATE &&
+          ticketWithExtend.state != COMPLETED_STATE &&
+          ticketWithExtend.state != ONGOING_STATE && (
             <TouchableOpacity style={styles.delete} onPress={onDelete}>
               <TrashIcon color={Colors.light.danger} />
             </TouchableOpacity>
@@ -253,9 +262,14 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
               title={"Parking area"}
               value={ticketWithExtend.parkingLot?.name}
             />
-            <Text style={styles.address}>
-              {ticketWithExtend.parkingLot?.address}
-            </Text>
+            <TouchableOpacity onPress={handleOpenMap}>
+              <Text style={styles.address}>
+                {ticketWithExtend.parkingLot?.address}{" "}
+                <Text style={{ color: Colors.light.tint }}>
+                  (Press to open on map)
+                </Text>
+              </Text>
+            </TouchableOpacity>
             <View style={{ flexDirection: "row" }}>
               <View style={{ flex: 1 }}>
                 <Item

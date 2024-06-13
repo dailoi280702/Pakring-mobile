@@ -111,7 +111,7 @@ const ParkingDetailsScreen = ({ navigation, route }: Props) => {
         <View style={styles.container}>
           <Image
             source={{
-              uri: "https://shopping.saigoncentre.com.vn/Data/Sites/1/News/32/013.jpg",
+              uri: "https://images.unsplash.com/photo-1616363088386-31c4a8414858?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             }}
             style={styles.image}
           />
