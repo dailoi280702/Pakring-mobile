@@ -27,13 +27,6 @@ const actions = [
     icon: <FontAwesome5 name="user" size={19} color={Colors.light.primary} />,
   },
   {
-    text: "Payment",
-    screen: "HomeScreen",
-    icon: (
-      <AntDesign name="creditcard" size={20} color={Colors.light.primary} />
-    ),
-  },
-  {
     text: "Favorite",
     screen: "FavoriteScreen",
     icon: <FontAwesome name="heart-o" size={20} color={Colors.light.primary} />,

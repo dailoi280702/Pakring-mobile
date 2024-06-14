@@ -1,5 +1,5 @@
 import AlertHelper from "./AlertHelper";
-import UploadHelper from "./uploadHelper";
+import UploadHelper from "./UploadHelper";
 import ColorHelper from "./ColorHelper";
 import CurrencyHelper from "./CurrencyHelper";
 import DateTimeHelper from "./DateTimeHelper";

@@ -15,27 +15,45 @@ const HistoryBookingItem = ({ item, onViewTicket }: Props) => {
   const parkingLot = item.parkingLot;
   return (
     <TouchableOpacity style={styles.container} onPress={onViewTicket}>
-      <View style={[styles.flexRow, { alignItems: "center", justifyContent: "space-between" }]}>
+      <View
+        style={[
+          styles.flexRow,
+          { alignItems: "center", justifyContent: "space-between" },
+        ]}
+      >
         <View style={{ display: "flex", flexDirection: "row" }}>
-          {item.state == "new" || item.state == "completed" || item.state == "ongoing" ? (
+          {item.state == "new" ||
+          item.state == "completed" ||
+          item.state == "ongoing" ? (
             <View style={[styles.status, styles[`${item.state}`]]}>
               <Text style={styles.statusText}>
-                {item.state[0].toUpperCase() + item.state.slice(1, item.state.length)}
+                {item.state[0].toUpperCase() +
+                  item.state.slice(1, item.state.length)}
               </Text>
             </View>
           ) : (
             <View style={[styles.status, styles.cancelled]}>
-              <Text style={[styles.statusText, styles.scheduleText]}>Cancelled</Text>
+              <Text style={[styles.statusText, styles.scheduleText]}>
+                Cancelled
+              </Text>
             </View>
           )}
           {item.isExtend && (
             <View style={[styles.status, styles.extend]}>
-              <Text style={[styles.statusText]}>{item.exitTime ? "Expired" : "Extend"}</Text>
+              <Text style={[styles.statusText]}>
+                {item.exitTime ? "Expired" : "Extend"}
+              </Text>
             </View>
           )}
         </View>
         <Text style={styles.price} numberOfLines={1}>
-          {CurrencyHelper.formatVND(item?.total)}
+          {/* {CurrencyHelper.formatVND(item?.total)} */}
+          {CurrencyHelper.formatVND(
+            item?.total +
+              (item.ticketExtend
+                ? item.ticketExtend.reduce((t, v) => t + Number(v.total), 0)
+                : 0)
+          )}
         </Text>
       </View>
       <Text style={styles.title} numberOfLines={2}>
@@ -57,7 +75,11 @@ const HistoryBookingItem = ({ item, onViewTicket }: Props) => {
             {dayjs(item?.startTime).format("HH:mm")}
           </Text>
         </View>
-        <MaterialIcons name="keyboard-arrow-right" size={24} color={Colors.light.text} />
+        <MaterialIcons
+          name="keyboard-arrow-right"
+          size={24}
+          color={Colors.light.text}
+        />
         <View style={styles.wrapper}>
           <Text style={styles.date} numberOfLines={1}>
             {dayjs(item?.endTime).format("DD MMM YY")}

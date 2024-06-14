@@ -63,7 +63,7 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
   const userState = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const [ticketWithExtend, setTicketWithExtend] = useState<Ticket>(
-    route.params,
+    route.params
   );
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -71,10 +71,10 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
   const [isGoodReview, setIsGoodReview] = useState(true);
 
   useEffect(() => {
-    if (isOpen === true) {
+    if (isOpen) {
       bottomSheetRef?.current?.snapToIndex(0);
     } else {
-      bottomSheetRef?.current?.close();
+      bottomSheetRef?.current?.snapToIndex(-1);
     }
   }, [isOpen]);
 
@@ -84,17 +84,18 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
       ticketWithExtend.isGoodReview == null
     ) {
       if (!bottomSheetRef || !bottomSheetRef.current) return;
-      setIsOpen(true);
+      // setIsOpen(true);
+      bottomSheetRef?.current?.snapToIndex(0);
     }
   }, [ticketWithExtend]);
 
   var time = `${dayjs(route.params.startTime).format("HH:mm")} - ${dayjs(
-    route.params.endTime,
+    route.params.endTime
   ).format("HH:mm")}`;
 
   if (route.params.state == "completed") {
     time = `${dayjs(route.params.entryTime).format("HH:mm")} - ${dayjs(
-      route.params.exitTime,
+      route.params.exitTime
     ).format("HH:mm")}`;
   }
 
@@ -133,7 +134,7 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
             ticketActions.cancelTicket({
               id: ticketWithExtend.id,
               state: ticketWithExtend.state,
-            }),
+            })
           );
           navigation.goBack();
         },
@@ -184,7 +185,8 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
     Spinner.show();
     try {
       await ticketApi.reviewTicket(ticketWithExtend.id, isGoodReview, review);
-      setIsOpen(false);
+      // setIsOpen(false);
+      bottomSheetRef?.current?.snapToIndex(-1);
       Alert.alert("Thanks for your review!");
       onRefresh();
     } catch (e) {
@@ -286,7 +288,7 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
                 <Item
                   title={"Duration"}
                   value={DateTimeHelper.convertToHour(
-                    ticketWithExtend?.timeFrame?.duration,
+                    ticketWithExtend?.timeFrame?.duration
                   )}
                 />
                 {ticketWithExtend.state == "cancel" && (
@@ -307,7 +309,7 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
             ticketWithExtend.ticketExtend &&
             ticketWithExtend.ticketExtend.map((e, i) => {
               var hour = `${dayjs(e.startTime).format("HH:mm")} - ${dayjs(
-                e.endTime,
+                e.endTime
               ).format("HH:mm")}`;
               var duration =
                 (dayjs(e.endTime).hour() - dayjs(e.startTime).hour()) * 60 +
@@ -375,72 +377,66 @@ const BookingTicketScreen = ({ navigation, route }: any) => {
           </AppButton>
         ))}
 
-      {
-        <BottomSheet
-          ref={bottomSheetRef}
-          index={-1}
-          enablePanDownToClose={true}
-          snapPoints={[280, "52%", "95%"]}
-          style={{
-            borderColor: "rgba(0, 0, 0, 0.1)",
-            borderWidth: 1,
-            borderRadius: 16,
-          }}
-        >
-          <BottomSheetView>
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={-1}
+        enablePanDownToClose={true}
+        snapPoints={[280, "52%", "95%"]}
+        style={{
+          borderColor: "rgba(0, 0, 0, 0.1)",
+          borderWidth: 1,
+          borderRadius: 16,
+        }}
+      >
+        <BottomSheetView>
+          <View
+            style={{
+              paddingHorizontal: 20,
+              height: "100%",
+              backgroundColor: "white",
+              display: "flex",
+              gap: 12,
+            }}
+          >
+            <Text style={{ fontSize: 14, fontWeight: "500", marginBottom: 8 }}>
+              How was your experience
+            </Text>
             <View
               style={{
-                paddingHorizontal: 20,
-                height: "100%",
-                backgroundColor: "white",
                 display: "flex",
-                gap: 12,
+                flexDirection: "row",
+                gap: 24,
+                justifyContent: "center",
               }}
             >
-              <Text
-                style={{ fontSize: 14, fontWeight: "500", marginBottom: 8 }}
-              >
-                How was your experience
-              </Text>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: 24,
-                  justifyContent: "center",
-                }}
-              >
-                {reviewItem.map(({ value, label, accentColor }) => (
-                  <SelectableReviewItem
-                    accentColor={accentColor}
-                    text={label}
-                    checked={isGoodReview == value}
-                    handleSelect={() => {
-                      setIsGoodReview(value);
-                    }}
-                  />
-                ))}
-              </View>
-              <TextInput
-                multiline
-                numberOfLines={4}
-                placeholder="Your review"
-                placeholderTextColor="#CBD5E1"
-                value={review}
-                onChangeText={setReview}
-                style={styles.reviewInput}
-              />
-              <AppButton onPress={handleReviewTicket}>
-                <Text
-                  style={{ color: "white", fontSize: 14, fontWeight: "500" }}
-                >
-                  Submit
-                </Text>
-              </AppButton>
+              {reviewItem.map(({ value, label, accentColor }) => (
+                <SelectableReviewItem
+                  accentColor={accentColor}
+                  text={label}
+                  checked={isGoodReview == value}
+                  handleSelect={() => {
+                    setIsGoodReview(value);
+                  }}
+                />
+              ))}
             </View>
-          </BottomSheetView>
-        </BottomSheet>
-      }
+            <TextInput
+              multiline
+              numberOfLines={4}
+              placeholder="Your review"
+              placeholderTextColor="#CBD5E1"
+              value={review}
+              onChangeText={setReview}
+              style={styles.reviewInput}
+            />
+            <AppButton onPress={handleReviewTicket}>
+              <Text style={{ color: "white", fontSize: 14, fontWeight: "500" }}>
+                Submit
+              </Text>
+            </AppButton>
+          </View>
+        </BottomSheetView>
+      </BottomSheet>
     </SafeAreaView>
   );
 };

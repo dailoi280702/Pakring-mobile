@@ -46,16 +46,17 @@ const ExtendTicketScreen = (props: Props) => {
       const closeTimeToMinute = closeTime.hour() * 60 + closeTime.minute();
       const res = await timeFrameApi.getAll(ticket.parkingLotId);
       if (res.data.data.data) {
-        var listTimeFrameValid = res.data.data.data.filter((element: any) => {
-          return (
-            startToMinute + element.duration >= openTimeToMinute &&
-            startToMinute + element.duration <= closeTimeToMinute &&
-            element.duration <= closeTimeToMinute - openTimeToMinute
-          );
-        });
+        var listTimeFrameValid = res.data.data.data;
+        // .filter((element: any) => {
+        //   return (
+        //     startToMinute + element.duration >= openTimeToMinute &&
+        //     startToMinute + element.duration <= closeTimeToMinute &&
+        //     element.duration <= closeTimeToMinute - openTimeToMinute
+        //   );
+        // });
         if (listTimeFrameValid.length <= 0) {
           Alert.alert(
-            "Sorry, there is no available time frame for you. \nSee you later!",
+            "Sorry, there is no available time frame for you. \nSee you later!"
           );
           props.navigation.goBack();
         }
